@@ -35,6 +35,21 @@
 - 배치 트랜잭션 매니저 선택 기준, 메타데이터 원자성이라는 대가 — [6장](spring-transaction-boundaries-and-batch.md#6-배치에서-어떤-트랜잭션-매니저를-고를-것인가)
 - 트랜잭션 경계 변경을 테스트로 잡는 법 (판별력 있는 통합 테스트, 실 DB A/B) — [10장](spring-transaction-boundaries-and-batch.md#10-트랜잭션-경계를-테스트로-잡는-법)
 
+## JPA · 영속성 컨텍스트
+- 영속성 컨텍스트란 무엇인가 (동일성 보장 · 변경 감지 · 쓰기 지연) — [2장](jpa-lazy-loading-and-persistence-context.md#2-orm은-무엇을-대신해-주나--엔티티와-영속성-컨텍스트)
+- 1차 캐시와 그 수명 — [3장](jpa-lazy-loading-and-persistence-context.md#3-영속성-컨텍스트는-1차-캐시다)
+- 지연 로딩과 프록시 — 무엇이 로딩을 발동시키나 — [4장](jpa-lazy-loading-and-persistence-context.md#4-지연-로딩--프록시는-언제-진짜가-되나)
+- **단건을 고치려는 코드가 N건을 읽는 순간** — [5장](jpa-lazy-loading-and-persistence-context.md#5-핵심--한-건을-고치려는-코드가-n건을-읽는-순간)
+- **트랜잭션 경계를 좁히면 캐시 히트가 DB 왕복이 된다** — [6장](jpa-lazy-loading-and-persistence-context.md#6-왜-어제까지는-문제가-아니었나--캐시의-수명은-트랜잭션의-수명이다)
+- N+1 문제와의 차이, 쿼리 수가 지표가 안 되는 이유 — [7장](jpa-lazy-loading-and-persistence-context.md#7-이게-n1-문제와-같은-것인가)
+- 비용을 숫자로 확인하기 (Hibernate 통계 · SQL 로그) — [8장](jpa-lazy-loading-and-persistence-context.md#8-눈으로-확인하는-법--통계와-sql-로그) · [부록 A.4](jpa-lazy-loading-and-persistence-context.md#a4-통계-지표-읽는-법과-켤-때의-부작용)
+- 고치는 네 가지 방법과 대가 (전용 조회 · fetch join · 벌크 UPDATE) — [9장](jpa-lazy-loading-and-persistence-context.md#9-고치는-네-가지-방법과-각각의-대가)
+- 단방향 `@OneToMany`의 벽과 읽기 전용 FK 매핑 — [10장](jpa-lazy-loading-and-persistence-context.md#10-자식으로-직접-조회하기--단방향-연관의-벽과-읽기-전용-매핑)
+- 성능 회귀를 테스트로 잡기 (진짜 DB로 비용을 단언하기) — [11장](jpa-lazy-loading-and-persistence-context.md#11-회귀를-테스트로-잡는-법)
+- `LazyInitializationException` — [부록 A.1](jpa-lazy-loading-and-persistence-context.md#a1-lazyinitializationexception--세션이-닫힌-뒤에-건드리면)
+- 연관관계별 `fetch` 기본값 — [부록 A.2](jpa-lazy-loading-and-persistence-context.md#a2-연관관계별-fetch-기본값)
+- `open-in-view` — [부록 A.3](jpa-lazy-loading-and-persistence-context.md#a3-open-in-view--지연-로딩의-수명을-http-요청까지-늘리는-스위치)
+
 ## JVM 메모리 · 컨테이너
 - 종료 코드 읽는 법 (128+N, 137이 특별한 이유) — [2장](jvm-memory-and-container-limits.md#2-프로세스가-죽는다는-것--종료-코드부터) · [부록 A.2](jvm-memory-and-container-limits.md#a2-종료-코드-빠른-참조)
 - 힙 밖의 메모리 (Metaspace·code cache·스레드 스택·direct buffer) — [4장](jvm-memory-and-container-limits.md#4-jvm이-쓰는-메모리는-힙만이-아니다) · [부록 A.4](jvm-memory-and-container-limits.md#a4-왜-메모리-사용량rss이-힙보다-큰가)
@@ -61,3 +76,4 @@
 | [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-08-18 |
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-09-02 |
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-09-07 |
+| [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-09-07 |
