@@ -62,6 +62,23 @@
 - cgroup 기초 — [부록 A.1](jvm-memory-and-container-limits.md#a1-cgroup--리눅스가-자원-한도를-거는-방법)
 - Metaspace 두 옵션의 차이 — [부록 A.3](jvm-memory-and-container-limits.md#a3-metaspace의-두-옵션은-이름만-비슷하고-역할이-다르다)
 
+## AWS 계정 · 조직 · 권한
+- AWS 조직의 전체 구조 (Organization · 조직의 Root · OU · 관리 계정 · 멤버 계정) — [2장](aws-organizations-accounts-and-access.md#2-aws-조직의-전체-구조--무엇이-무엇을-담고-있나)
+- **AWS 계정과 로그인하는 사람은 서로 다른 축이다** — [3장](aws-organizations-accounts-and-access.md#3-계정과-사람은-서로-다른-축이다)
+- 로그인 방법 네 가지 (루트 사용자 · IAM 사용자 · IAM 역할 · Identity Center와 Permission Set) — [4장](aws-organizations-accounts-and-access.md#4-로그인하는-방법은-네-가지뿐이다)
+- 같은 이메일인데 왜 다른 신원인가, 계정 초대 vs 사용자 초대 — [5장](aws-organizations-accounts-and-access.md#5-같은-이메일인데-왜-다른-신원인가)
+- 계정 안의 관리자 권한 vs 조직을 관리하는 권한 — [6장](aws-organizations-accounts-and-access.md#6-어디를-관리하는-권한인가--계정-안과-조직-위)
+- SCP는 권한을 주지 않고 상한만 정한다 — [6.3](aws-organizations-accounts-and-access.md#63-scp는-권한을-주지-않는다--상한만-정한다)
+- 조직 규모에 따른 계정·OU 구성과 관리 부담 — [8장](aws-organizations-accounts-and-access.md#8-조직-규모에-따라-어떻게-나누나)
+- Control Tower를 언제 고려하나 — [부록 A.1](aws-organizations-accounts-and-access.md#a1-control-tower--언제-고려하나)
+- 멤버 계정의 루트 자격증명을 중앙에서 없애는 기능 — [부록 A.2](aws-organizations-accounts-and-access.md#a2-루트-접근-중앙-관리--멤버-계정의-루트를-없애는-기능)
+
+## 클라우드 계정 수명 관리
+- 임시 계정을 만들고 정리하기까지의 전체 흐름 — [7장](aws-organizations-accounts-and-access.md#7-인증용-계정을-만들고-정리하기까지)
+- **리소스 삭제 · 계정 이동 · OU 삭제 · 조직에서 제거 · 계정 폐쇄 · 조직 삭제는 서로 다른 것을 지운다** — [7.3](aws-organizations-accounts-and-access.md#73-지우는-방법은-여섯-가지고-서로-다른-것을-지운다)
+- 루트 이메일 재사용 제한과 폐쇄 전 이메일 변경 — [7.4](aws-organizations-accounts-and-access.md#74-루트-이메일은-폐쇄-전에-바꿔야-한다)
+- 폐쇄 직후(90일) vs 영구 폐쇄, 실제 정리 순서와 대기 기간 — [7.5](aws-organizations-accounts-and-access.md#75-실제-정리-순서와-대기-기간)
+
 ## 운영 관측성
 - 사후 조사를 위해 미리 남겨야 하는 것 (GC 로그, 알람 조건, 오케스트레이터 이벤트 보관 기간) — [11장](jvm-memory-and-container-limits.md#11-사후에-알-수-있으려면-무엇을-남겨야-하나)
 
@@ -77,3 +94,4 @@
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-09-02 |
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-09-07 |
 | [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-09-07 |
+| [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-09-10 |
