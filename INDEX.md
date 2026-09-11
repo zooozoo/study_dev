@@ -82,6 +82,22 @@
 ## 운영 관측성
 - 사후 조사를 위해 미리 남겨야 하는 것 (GC 로그, 알람 조건, 오케스트레이터 이벤트 보관 기간) — [11장](jvm-memory-and-container-limits.md#11-사후에-알-수-있으려면-무엇을-남겨야-하나)
 
+## DB 스키마 변경 · 온라인 DDL
+- DDL과 온라인 DDL이란 무엇인가 — [1장](mysql-online-ddl-and-schema-migration.md#1-ddl과-온라인-ddl--용어부터)
+- 테이블은 파일이고 행은 특정 물리 레이아웃으로 놓인다 — [2장](mysql-online-ddl-and-schema-migration.md#2-테이블은-파일이고-행은-그-안에-특정-모양으로-놓여-있다)
+- **테이블 rebuild가 물리적으로 하는 일과 그 비용** — [3장](mysql-online-ddl-and-schema-migration.md#3-rebuild란-무엇인가--새-파일을-만들어-전-행을-옮겨-적는-일)
+- 세 가지 알고리즘 (COPY · INPLACE · INSTANT), INPLACE도 rebuild 한다 — [4장](mysql-online-ddl-and-schema-migration.md#4-세-가지-알고리즘--copy-inplace-instant)
+- INSTANT는 기존 행을 안 건드린다 — 데이터 딕셔너리와 행 버전 — [5장](mysql-online-ddl-and-schema-migration.md#5-instant는-기존-행을-안-건드린다--그럼-읽을-때는-어떻게-되나)
+- **알고리즘을 안 적으면 조용히 내려간다 — 안전 단언으로서의 ALGORITHM** — [6장](mysql-online-ddl-and-schema-migration.md#6-안-적으면-조용히-내려간다--그래서-굳이-적는다)
+- 인덱스 추가를 별도 문장으로 빼는 이유, 나눌 때의 원자성 대가 — [7장](mysql-online-ddl-and-schema-migration.md#7-인덱스는-왜-별도-문장으로-빼야-하나)
+- 버전 의존 (8.0.12 INSTANT 도입, 8.0.29 임의 위치), AFTER를 피하는 이유 — [8장](mysql-online-ddl-and-schema-migration.md#8-버전에-따라-달라지는-것--8012와-8029)
+- INSTANT의 64회 한도와 rebuild로 리셋 — [9장](mysql-online-ddl-and-schema-migration.md#9-instant에는-64번이라는-한도가-있다)
+- 마이그레이션 체크리스트 — [10장](mysql-online-ddl-and-schema-migration.md#10-정리--마이그레이션-체크리스트)
+- 연산별 rebuild 여부 확인법 (공식 온라인 DDL 표 읽기) — [부록 A.1](mysql-online-ddl-and-schema-migration.md#a1-연산별로-rebuild-하는지-확인하는-법)
+- INSTANT가 불가능한 조건들 — [부록 A.2](mysql-online-ddl-and-schema-migration.md#a2-instant가-아예-불가능한-조건들)
+- ALGORITHM과 LOCK은 서로 다른 축이다 — [부록 A.3](mysql-online-ddl-and-schema-migration.md#a3-알고리즘과-잠금은-서로-다른-축이다)
+- 실험 재현 스크립트 — [부록 A.4](mysql-online-ddl-and-schema-migration.md#a4-이-노트의-실험을-재현하는-스크립트)
+
 ## DB 동시성 · 자원
 - 커넥션 풀이 마른다는 것 (Hikari, 연쇄 장애) — [부록 A.1](spring-transaction-boundaries-and-batch.md#a1-커넥션-풀이-마른다는-것)
 - 행 잠금의 수명, lock wait timeout, 교착 — [부록 A.2](spring-transaction-boundaries-and-batch.md#a2-행-잠금은-언제-잡히고-언제-풀리나)
@@ -95,3 +111,4 @@
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-09-07 |
 | [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-09-07 |
 | [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-09-10 |
+| [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-09-11 |
