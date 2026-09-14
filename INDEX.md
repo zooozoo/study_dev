@@ -63,6 +63,7 @@
 - Metaspace 두 옵션의 차이 — [부록 A.3](jvm-memory-and-container-limits.md#a3-metaspace의-두-옵션은-이름만-비슷하고-역할이-다르다)
 
 ## AWS 계정 · 조직 · 권한
+- Dev Weekly 한 장 요약 (계정·조직 축 vs 로그인·권한 축) — [요약과 구조도](aws-organizations-accounts-and-access.md#dev-weekly-한-장-요약--계정과-로그인-주체를-두-축으로-보기)
 - AWS 조직의 전체 구조 (Organization · 조직의 Root · OU · 관리 계정 · 멤버 계정) — [2장](aws-organizations-accounts-and-access.md#2-aws-조직의-전체-구조--무엇이-무엇을-담고-있나)
 - **AWS 계정과 로그인하는 사람은 서로 다른 축이다** — [3장](aws-organizations-accounts-and-access.md#3-계정과-사람은-서로-다른-축이다)
 - 로그인 방법 네 가지 (루트 사용자 · IAM 사용자 · IAM 역할 · Identity Center와 Permission Set) — [4장](aws-organizations-accounts-and-access.md#4-로그인하는-방법은-네-가지뿐이다)
@@ -110,5 +111,5 @@
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-09-02 |
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-09-07 |
 | [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-09-07 |
-| [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-09-10 |
+| [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-09-11 |
 | [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-09-11 |
