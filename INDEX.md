@@ -10,11 +10,45 @@
 - STOMP (WebSocket 위의 메시징 규약) — [4장](realtime-web-networking-cors-infra.md#4-stomp--websocket-위에-얹는-대화-규칙)
 - SockJS 폴백 사다리 (XHR streaming/polling, 폴백의 대가) — [6장](realtime-web-networking-cors-infra.md#6-sockjs--websocket이-막히면-http로-흉내내기)
 
+## 암호학 기초
+- **암호학이 지키려는 네 가지** (기밀성·무결성·인증·부인방지)와 기술 매핑 — [1장](cryptography-fundamentals-for-backend.md#1-암호학은-무엇을-지키려고-있나--네-가지-목적)
+- "양방향 키 / 단방향 키"라는 구분이 정확하지 않은 이유 — [2장](cryptography-fundamentals-for-backend.md#2-먼저-용어를-바로잡자--양방향-키--단방향-키는-정확한-구분이-아니다)
+- 대칭키 암호 (AES·ChaCha20, AEAD, 속도 실측) 와 키 전달 문제 — [3장](cryptography-fundamentals-for-backend.md#3-대칭키-암호--빠르지만-키를-건네줄-방법이-없다)
+- 공개키 암호 (RSA 작은 숫자 예제, 공개키 암호화 → 개인키 복호화) — [4장](cryptography-fundamentals-for-backend.md#4-공개키-암호--잠그는-열쇠와-여는-열쇠를-분리한다)
+- 해시 (SHA-256, 눈사태 효과, 왜 복호화라는 개념이 없나, 비밀번호 해싱은 별개) — [5장](cryptography-fundamentals-for-backend.md#5-해시--되돌릴-수-없는-지문)
+- **전자서명 — 개인키로 서명, 공개키로 검증** — [6장](cryptography-fundamentals-for-backend.md#6-전자서명--이-문서에서-가장-중요한-primitive)
+- **"개인키로 암호화한다"가 왜 부정확한가** (EC·Ed25519 에는 암호화 연산이 없다) — [6.4](cryptography-fundamentals-for-backend.md#64-개인키로-암호화한다가-왜-부정확한가) · [부록 A.1](cryptography-fundamentals-for-backend.md#a1-rsa-에서-서명과-암호화가-왜-닮아-보이나)
+- RSA · ECDSA · Ed25519 비교, ECDSA 난수 재사용 위험 — [6.5](cryptography-fundamentals-for-backend.md#65-rsa--ecdsa--ed25519-는-어떻게-다른가)
+- HMAC — 해시·HMAC·전자서명의 차이와 부인방지 — [7장](cryptography-fundamentals-for-backend.md#7-hmac--공유-비밀로-만드는-무결성-태그)
+- **JWT 의 HS256 vs RS256, `alg` 혼동 취약점** — [7.4](cryptography-fundamentals-for-backend.md#74-jwt-의-hs256-과-rs256)
+- 키 교환 (DH·ECDH·ECDHE) 과 전방 비밀성, TLS 1.3 에서 키 교환이 스위트에서 분리된 것 — [8장](cryptography-fundamentals-for-backend.md#8-키-교환--비밀을-보내지-않고-비밀을-공유하는-법)
+- 하이브리드 암호 — 왜 RSA 로 전부 암호화하지 않나 — [9장](cryptography-fundamentals-for-backend.md#9-하이브리드-암호--왜-rsa-로-전부-암호화하지-않나)
+- **primitive 가 TLS 안에서 조립되는 큰 그림** — [10장](cryptography-fundamentals-for-backend.md#10-여기까지를-tls-한-장으로)
+- 스스로 답해 보기 10문항 — [11장](cryptography-fundamentals-for-backend.md#11-스스로-답해-보기)
+- 실습 명령 모음 — [부록 A.2](cryptography-fundamentals-for-backend.md#a2-실습-명령-모음)
+
+## TLS · 인증서 · 신뢰 저장소
+- 이 주제를 읽는 데 필요한 암호학 요약 (도구 한 표, 전자서명, 인증 ≠ 기밀성) — [2장](tls-certificates-and-trust-stores.md#2-여기서-필요한-암호학)
+- 인증서란 무엇인가 (X.509 필드 읽기, `sha256WithRSAEncryption` 이름의 오해) — [3장](tls-certificates-and-trust-stores.md#3-인증서란-무엇인가--공개키에-이름표를-붙인-것)
+- CA와 서명 체인, 루트가 자기서명인 이유 — [4장](tls-certificates-and-trust-stores.md#4-ca-와-서명-체인--보증인을-세운다)
+- **신뢰 저장소 = 검증이 끝나는 지점** (신뢰 앵커, 경로 검증 알고리즘) — [5장](tls-certificates-and-trust-stores.md#5-신뢰-저장소--검증이-끝나는-지점)
+- 왜 서버는 루트를 보내주지 않나 — [5.4](tls-certificates-and-trust-stores.md#54-왜-서버는-루트를-보내주지-않나)
+- keystore ≠ truststore, `cacerts` 비밀번호가 공개돼도 괜찮은 이유, mTLS — [6장](tls-certificates-and-trust-stores.md#6-keystore-와-truststore-는-정반대다)
+- **런타임마다 신뢰 목록을 따로 들고 다니는 이유와 그 부작용** — [7장](tls-certificates-and-trust-stores.md#7-왜-런타임마다-신뢰-목록을-따로-들고-있나)
+- 체인 말고 더 검사하는 것들 (SAN 호스트명, 유효기간, CRL/OCSP/stapling, 용도) — [8장](tls-certificates-and-trust-stores.md#8-검증은-체인-확인만이-아니다)
+- 오류 메시지 읽는 법 — `PKIX path building failed` 는 **차단이 아니다** — [9장](tls-certificates-and-trust-stores.md#9-오류-메시지-읽는-법)
+- 신뢰 저장소를 고칠 때의 대가 비교 (추가 vs 대체, `KeychainStore`, `JAVA_TOOL_OPTIONS`) — [11.3](tls-certificates-and-trust-stores.md#113-해결-수단과-각각의-대가)
+- 재사용 가능한 진단 절차 6단계 — [12장](tls-certificates-and-trust-stores.md#12-다시-만났을-때의-진단-절차)
+- 미니 PKI 실습 (루트→중간→서버 3단 체인 직접 만들기) — [13장](tls-certificates-and-trust-stores.md#13-직접-해보기--미니-pki-실습)
+- `openssl` · `keytool` 명령 사전 — [부록 A.1](tls-certificates-and-trust-stores.md#a1-openssl--keytool-명령-사전)
+- 조사 중 걸린 함정들 (LibreSSL의 `-CAfile`, CA `keyUsage` 누락) — [부록 A.3](tls-certificates-and-trust-stores.md#a3-조사-중에-걸린-함정들)
+
 ## 웹 보안
 - CORS (동작 원리, 헤더 사전, WebSocket이 안 걸리는 이유) — [7장](realtime-web-networking-cors-infra.md#7-cors--브라우저가-남의-집-응답을-못-읽게-막는-규칙)
 
 ## 인프라
 - 프록시 · TLS 인터셉션 — 사내망이 WebSocket을 막는 이유 — [5장](realtime-web-networking-cors-infra.md#5-왜-사내망에서-websocket이-막히나)
+- TLS 가로채기가 작동하는 원리 (연결을 둘로 쪼개고 자기 인증서를 내민다) — [10장](tls-certificates-and-trust-stores.md#10-tls-가로채기가-작동하는-원리)
 - 로드밸런서와 sticky session — [9장](realtime-web-networking-cors-infra.md#9-로드밸런서와-세션-고정sticky-session)
 - WAF — [10장](realtime-web-networking-cors-infra.md#10-waf--웹-방화벽)
 
@@ -113,3 +147,5 @@
 | [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-09-07 |
 | [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-09-11 |
 | [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-09-11 |
+| [tls-certificates-and-trust-stores.md](tls-certificates-and-trust-stores.md) | TLS · X.509 인증서 · 신뢰 저장소(PKI) · 런타임별 CA 관리 | 2026-09-16 |
+| [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-09-16 |
