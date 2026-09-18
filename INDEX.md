@@ -114,6 +114,19 @@
 - 루트 이메일 재사용 제한과 폐쇄 전 이메일 변경 — [7.4](aws-organizations-accounts-and-access.md#74-루트-이메일은-폐쇄-전에-바꿔야-한다)
 - 폐쇄 직후(90일) vs 영구 폐쇄, 실제 정리 순서와 대기 기간 — [7.5](aws-organizations-accounts-and-access.md#75-실제-정리-순서와-대기-기간)
 
+## Kotlin 언어
+- 함수 타입과 람다 — 함수도 값이다 — [1장](kotlin-callable-references.md#1-함수도-값이다--함수-타입과-람다)
+- **`::` 호출 가능 참조 — 호출하지 않고 이름으로 가리킨다** — [2장](kotlin-callable-references.md#2-는-이미-있는-함수를-이름으로-가리킨다)
+- `::`의 네 가지 모양 (최상위 · `타입::멤버` · `객체::멤버` · `::생성자`, 프로퍼티 참조) — [3장](kotlin-callable-references.md#3-의-네-가지-모양)
+- unbound vs bound — 수신자가 인자로 남나 묶이나, 묶이는 시점 — [4장](kotlin-callable-references.md#4-수신자를-묶느냐-마느냐--unbound와-bound)
+- **클래스 안의 `::member` = `this::member`, 오버라이드가 불리는 이유, `protected` 함수를 넘기는 설계** — [5장](kotlin-callable-references.md#5-클래스-안의-member는-thismember다--계기-코드-해석)
+- 오버로드는 기대 타입으로 고른다 — [6장](kotlin-callable-references.md#6-같은-이름이-여러-개면--기대-타입으로-고른다)
+- Kotlin 1.4 적응(기본 인자 · `Unit` · `vararg` · `suspend`)은 인자 위치에서만 된다 — [7장](kotlin-callable-references.md#7-kotlin-14의-적응adaptation--인자-위치에서만-된다)
+- 람다냐 참조냐 고르는 기준 — [8장](kotlin-callable-references.md#8-람다냐-참조냐--고르는-기준)
+- `::class` / `::class.java` — [9장](kotlin-callable-references.md#9-class--같은-기호의-다른-쓰임)
+- Java 메서드 참조와 비교 — [10장](kotlin-callable-references.md#10-java-메서드-참조와-비교)
+- `KFunction` · `KProperty` — [부록 A.1](kotlin-callable-references.md#a1-참조의-실제-타입--kfunction과-kproperty)
+
 ## 운영 관측성
 - 사후 조사를 위해 미리 남겨야 하는 것 (GC 로그, 알람 조건, 오케스트레이터 이벤트 보관 기간) — [11장](jvm-memory-and-container-limits.md#11-사후에-알-수-있으려면-무엇을-남겨야-하나)
 
@@ -149,3 +162,4 @@
 | [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-09-11 |
 | [tls-certificates-and-trust-stores.md](tls-certificates-and-trust-stores.md) | TLS · X.509 인증서 · 신뢰 저장소(PKI) · 런타임별 CA 관리 | 2026-09-16 |
 | [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-09-16 |
+| [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-09-18 |
