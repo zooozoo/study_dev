@@ -2,7 +2,7 @@
 
 Kotlin 코드에서 `::sessionUserType`, `String::length`, `Person::class.java`처럼 `::`가 붙은 표현이 무엇을 만드는지, 언제 람다 대신 쓰는지 정리한다. 핵심은 하나다. **`::`는 이미 있는 함수(또는 프로퍼티·생성자·클래스)를 "호출하지 않고 이름으로 가리켜서" 값으로 만든다.**
 
-- 작성일: 2026-09-18
+- 작성일: 2026-09-18 (같은 날 11장 "받는 쪽" 보강)
 - 검증 환경: Kotlin 1.9.25 (JVM). 본문의 동작은 모두 [부록 A.2](#a2-실험-코드와-실제-출력) 실험으로 직접 확인했다.
 
 ## 계기 — 한 줄 요약
@@ -42,6 +42,11 @@ class AuthInterceptor(
 | 람다로 쓸까, `::`로 쓸까? | [8장](#8-람다냐-참조냐--고르는-기준) |
 | `Foo::class.java`의 `::`도 같은 것인가? | [9장](#9-class--같은-기호의-다른-쓰임) |
 | Java의 `String::length`와 같은 문법인가? | [10장](#10-java-메서드-참조와-비교) |
+| `private val userTypeOf: (User) -> String`는 무엇인가? `User`를 넣으면 `String`으로 바꿔 주는 함수인가? | [11.1절](#111-선언-읽는-법--함수를-담는-칸) |
+| 이 프로퍼티는 안에서 어떻게 부르나? 부를 때마다 다시 실행되나? | [11.2절](#112-부르는-법--메서드처럼-부르지만-실제로는-invoke다) |
+| 이 칸은 누가, 무엇으로 채우나? 테스트의 `{ "FIXED" }`는 뭔가? | [11.3절](#113-채우는-법--넣는-쪽이-계산-방법을-정한다) |
+| 계기 코드에서 값이 실제로 어떤 순서로 흐르나? | [11.4절](#114-계기-코드에서-값이-흐르는-순서) |
+| 기본값·null 허용·`typealias`·`fun interface`는 언제 쓰나? | [11.5절](#115-자주-만나는-변형들) |
 
 ---
 
@@ -64,7 +69,7 @@ listOf(1, 2, 3, 4).filter(isEvenLambda)   // [2, 4]
 
 `filter`는 "각 원소를 받아 남길지 말지 알려주는 함수"를 인자로 받는다. 그 함수를 넘겨야 하는 자리에 람다를 넣은 것이다.
 
-**왜 실전에서 중요한가**: 계기 코드의 `AuthInterceptor`는 "사용자 유형을 계산하는 방법"을 생성자에서 **함수로** 받는다. 인터셉터는 계산 방법을 모르고, 넘겨받은 함수만 호출한다. 그래서 모듈마다 다른 계산 방법을 끼워 넣을 수 있다(전략 패턴을 함수 하나로 표현한 것).
+**왜 실전에서 중요한가**: 계기 코드의 `AuthInterceptor`는 "사용자 유형을 계산하는 방법"을 생성자에서 **함수로** 받는다(받는 쪽이 이 함수를 어떻게 담고 부르는지는 [11장](#11-받는-쪽--함수-타입-프로퍼티는-계산-방법을-끼워-넣는-칸이다)). 인터셉터는 계산 방법을 모르고, 넘겨받은 함수만 호출한다. 그래서 모듈마다 다른 계산 방법을 끼워 넣을 수 있다(전략 패턴을 함수 하나로 표현한 것).
 
 ## 2. `::`는 이미 있는 함수를 이름으로 가리킨다
 
@@ -281,6 +286,120 @@ Java 8의 메서드 참조도 `::`를 쓴다. 발상은 같고 표기가 조금 
 | 프로퍼티 | `Person::age` | 없음 (getter 메서드 `Person::getAge`) |
 | 결과의 타입 | 함수 타입 `(Int) -> Boolean` (실제로는 `KFunction1`) | 함수형 인터페이스 (`Predicate<Integer>` 등) — 대입 대상이 정한다 |
 
+## 11. 받는 쪽 — 함수 타입 프로퍼티는 "계산 방법"을 끼워 넣는 칸이다
+
+1~10장은 함수를 **넘기는 쪽**(`::`, 람다)을 봤다. 이 장은 **받는 쪽**, 즉 계기 코드의 이 선언을 본다.
+
+```kotlin
+class AuthInterceptor(
+    private val role: String,
+    private val sessionUserType: (LoginUser) -> String,
+)
+```
+
+### 11.1 선언 읽는 법 — 함수를 담는 칸
+
+`private val sessionUserType: (LoginUser) -> String`을 쪼개 읽으면 이렇다.
+
+| 조각 | 뜻 |
+|---|---|
+| `private val` | 이 클래스 안에서만 쓰는 읽기 전용 프로퍼티(필드) |
+| `sessionUserType` | 프로퍼티 이름 |
+| `(LoginUser) -> String` | 프로퍼티의 **타입** — "`LoginUser` 하나를 받아 `String`을 돌려주는 **함수**" |
+
+그러니까 이 프로퍼티에 담긴 값은 문자열이나 숫자가 아니라 **함수**다. 질문으로 돌아가 답하면:
+
+- "**`LoginUser`를 넣으면 `String`이 나온다**" — 맞다. 이 칸에 들어갈 수 있는 함수의 **모양(입력과 출력의 타입)**이 그렇다.
+- "**`String`으로 바꿔 준다**" — 절반만 맞다. **어떤 규칙으로 바꾸는지는 이 선언에 적혀 있지 않다.** 선언은 "이 모양의 함수를 하나 받겠다"는 칸일 뿐이고, 실제 규칙은 객체를 만드는 쪽이 넣어 준 함수가 정한다([11.3절](#113-채우는-법--넣는-쪽이-계산-방법을-정한다)).
+
+비유하면 콘센트다. 콘센트는 "220V 두 구멍 플러그"라는 모양만 정하고, 무엇을 꽂을지(청소기인지 충전기인지)는 쓰는 사람이 정한다. `AuthInterceptor`는 "사용자를 받아 문자열을 주는 함수"라는 모양만 정하고, 관리자 서버와 일반 서버가 각자 다른 함수를 꽂는다.
+
+### 11.2 부르는 법 — 메서드처럼 부르지만 실제로는 `invoke`다
+
+클래스 안에서는 이 프로퍼티를 **메서드처럼** 부른다.
+
+```kotlin
+class Interceptor(
+    private val role: String,
+    private val userTypeOf: (User) -> String,
+) {
+    fun connect(user: User): String {
+        val t = userTypeOf(user)          // 메서드처럼 호출
+        val t2 = userTypeOf.invoke(user)  // 같은 호출을 풀어 쓴 형태
+        return "role=$role userType=$t"
+    }
+}
+```
+
+공식 문서 표현으로는 함수 타입의 값은 `invoke(...)` 연산자로 부르며, `f.invoke(x)` 대신 `f(x)`로 줄여 쓸 수 있다. `userTypeOf(user)`가 메서드 호출처럼 보여도 실제로는 "프로퍼티에 담긴 함수 객체의 `invoke`를 부른다"는 뜻이다.
+
+**부를 때마다 다시 실행된다.** 함수 타입 프로퍼티는 결과값을 저장하는 게 아니라 **함수를 저장**한다. 그래서 `userTypeOf(user)`를 두 번 부르면 담긴 함수도 두 번 실행된다. 실험에서 호출 횟수를 세는 함수를 넣고 위 `connect`를 한 번 불렀더니(내부에서 두 번 호출) 카운터가 2가 됐다([부록 A.4](#a4-11장-실험-코드와-실제-출력)).
+
+**왜 실전에서 중요한가**: 담긴 함수가 무겁거나(DB 조회 등) 부작용이 있으면 호출 횟수가 곧 비용이다. 한 요청 안에서 여러 번 쓸 값이면 계기 코드처럼 **한 번 불러 지역 변수에 담아** 두고 재사용한다.
+
+```kotlin
+val userType = sessionUserType(loginUser)   // 한 번만 계산
+attributes["userType"] = userType
+log.info { "CONNECT OK userType=$userType" }
+```
+
+### 11.3 채우는 법 — 넣는 쪽이 계산 방법을 정한다
+
+같은 `Interceptor`에 넣는 함수만 바꿔 보면, 같은 사용자 `User(id="u1", type="SUPER_ADMIN")`에 대해 결과가 이렇게 달라진다(실측).
+
+| 넣은 것 | 코드 | `userType` 결과 |
+|---|---|---|
+| 메서드 참조(기본 구현) | `Interceptor("ADMIN", ::sessionUserType)` — 기본 구현은 `"MODULE"` 반환 | `MODULE` |
+| 메서드 참조(하위 클래스가 오버라이드) | 같은 코드, 오버라이드가 `user.type` 반환 | `SUPER_ADMIN` |
+| 람다 | `Interceptor("ADMIN") { user -> user.type.lowercase() }` | `super_admin` |
+| 람다 + `it` | `Interceptor("ADMIN") { it.id }` | `u1` |
+| 인자를 안 쓰는 람다 | `Interceptor("USER") { "FIXED" }` | `FIXED` |
+
+표에서 읽을 것 세 가지.
+
+1. **괄호 밖의 `{ ... }`** — 마지막 파라미터가 함수 타입이면 람다를 괄호 **밖에** 쓸 수 있다(trailing lambda — "뒤에 붙이는 람다"). `Interceptor("ADMIN") { ... }`는 `Interceptor("ADMIN", { ... })`와 같다.
+2. **`it`** — 파라미터가 하나뿐인 람다는 이름을 안 적으면 그 파라미터를 `it`이라는 이름으로 쓸 수 있다.
+3. **`{ "FIXED" }`** — `it`을 안 쓰면 인자를 무시하고 항상 같은 값을 돌려주는 함수가 된다. 계기 코드의 단위 테스트가 이 방식을 썼다. 인터셉터를 테스트할 때 "사용자 유형 계산"은 관심 밖이므로 고정값을 꽂아 두고, 그 값이 세션과 로그에 그대로 실렸는지만 확인한다. 함수를 받는 설계라서 테스트가 쉬워진 예다.
+
+### 11.4 계기 코드에서 값이 흐르는 순서
+
+일반화한 계기 코드에서 값이 흐르는 순서는 이렇다.
+
+| 순서 | 어디서 | 일어나는 일 |
+|---|---|---|
+| 1 | 애플리케이션 시작 | 설정 클래스가 `AuthInterceptor(role, ::sessionUserType)`로 인터셉터를 만든다. 이때 **함수 자체**가 인터셉터의 `sessionUserType` 칸에 저장된다(아직 실행 안 됨) |
+| 2 | 사용자가 접속(CONNECT) | 인터셉터가 토큰을 검증해 `LoginUser`를 얻는다 |
+| 3 | 같은 순간 | 인터셉터가 `sessionUserType(loginUser)`를 부른다 → 저장해 둔 함수가 **이제야 실행**된다 |
+| 4 | 함수 안 | 관리자 서버 설정은 오버라이드 버전이 불려 토큰의 사용자 유형(예: `SUPER_ADMIN`)을, 일반 서버 설정은 기본 버전이 불려 모듈 값(예: `USER`)을 돌려준다([5.2절](#52-오버라이드한-쪽이-불린다가상-디스패치)) |
+| 5 | 인터셉터 | 돌려받은 문자열을 세션 속성과 접속 로그에 기록한다 |
+
+핵심은 1번(저장)과 3번(실행)이 **다른 시점**이라는 것이다. 인터셉터는 3번에서 무슨 규칙이 실행되는지 모른 채 칸에 담긴 함수를 부르기만 한다.
+
+### 11.5 자주 만나는 변형들
+
+| 변형 | 코드 | 언제 쓰나 |
+|---|---|---|
+| 기본값 | `private val userTypeOf: (User) -> String = { role }` | 대부분은 같은 규칙이고 일부만 바꿀 때. 기본값 람다 안에서 **앞에 선언된 생성자 파라미터**(`role`)를 쓸 수 있다(실측) |
+| null 허용 | `private val hook: ((User) -> String)?` → `hook?.invoke(u) ?: "no-hook"` | "안 넣어도 되는" 선택적 동작. 괄호로 감싸야 하고, `hook(u)`로 바로 부르면 컴파일 오류 — `Reference has a nullable type '((User) -> String)?', use explicit '?.invoke()'` |
+| 이름 붙인 파라미터 | `(user: User) -> String` | 공식 문서상 파라미터 이름은 **문서화용**이다. 넣는 람다는 다른 이름을 써도 된다 |
+| `typealias` | `typealias UserTypeResolver = (user: User) -> String` | 같은 함수 타입이 여러 곳에 반복될 때 이름을 붙인다. 새 타입이 아니라 **별명**이라 그냥 `(User) -> String` 값도 그대로 들어간다 |
+| `fun interface` | `fun interface TypeResolver { fun resolve(user: User): String }` | 메서드 이름(`resolve`)으로 의미를 드러내고 싶거나, Java 쪽에서도 구현하기 쉽게 하고 싶을 때. 람다(`TypeResolver { it.id }`)와 메서드 참조(`::sessionUserType`) 모두 넣을 수 있었다(실측) |
+
+함수 타입이냐 `fun interface`냐는 이렇게 고른다.
+
+| 기준 | 함수 타입 `(User) -> String` | `fun interface` |
+|---|---|---|
+| 선언 비용 | 없음 — 그 자리에서 바로 | 인터페이스를 하나 만들어야 함 |
+| 의미 전달 | 프로퍼티 이름에 의존 | 인터페이스·메서드 이름으로 드러남 |
+| 구현이 여러 메서드로 커질 가능성 | 없음(함수 하나) | 나중에 일반 인터페이스로 키우기 쉬움 |
+| 한 곳에서만 쓰는 단순 계산 | 적합 | 과함 |
+
+### 11.6 JVM에서의 실체 — `Function1` 객체와 클로저
+
+JVM(Java Virtual Machine — Kotlin·Java 코드가 실행되는 가상 머신)에는 "함수 타입"이라는 개념이 따로 없다. 그래서 Kotlin은 `(User) -> String`을 `kotlin.jvm.functions.Function1`이라는 **인터페이스**로 바꾸고, 람다는 그 인터페이스를 구현한 객체가 된다. 실험에서 `(User) -> String` 람다가 구현한 인터페이스를 찍어 보니 `kotlin.jvm.functions.Function1`이었다. 숫자 `1`은 파라미터 개수다(`(A, B) -> C`면 `Function2`). Java 코드에서 이 값을 부를 때는 `f.invoke(user)`로 부른다.
+
+람다는 **바깥 변수를 붙잡아(capture) 쓸 수 있고**, 공식 문서상 붙잡은 변수를 람다 안에서 바꿀 수도 있다. 이렇게 바깥 변수까지 품은 함수를 **클로저(closure)**라고 한다. [11.2절](#112-부르는-법--메서드처럼-부르지만-실제로는-invoke다)의 호출 횟수 실험이 바로 바깥의 `counter` 변수를 붙잡아 올리는 클로저였다. 기본값 `{ role }`도 생성자 파라미터 `role`을 붙잡은 클로저다.
+
 ---
 
 ## 부록
@@ -398,3 +517,84 @@ fun main() {
 
 - Kotlin 공식 문서 — Reflection 중 "Callable references" (함수·프로퍼티·bound·생성자 참조, `this::foo`와 `::foo`가 같다는 설명): https://kotlinlang.org/docs/reflection.html
 - Kotlin 1.4 변경사항 — callable reference 개선(기본 인자·`Unit`·`vararg`·`suspend` 적응): https://kotlinlang.org/docs/whatsnew14.html
+- Kotlin 공식 문서 — Higher-order functions and lambdas (함수 타입 표기, 파라미터 이름, nullable 함수 타입, `invoke`, trailing lambda, `it`, `typealias`, 클로저): https://kotlinlang.org/docs/lambdas.html
+
+### A.4 11장 실험 코드와 실제 출력
+
+Kotlin 1.9.25, JDK 21로 실행했다.
+
+```kotlin
+data class User(val id: String, val type: String)
+
+class Interceptor(
+    private val role: String,
+    private val userTypeOf: (User) -> String,
+) {
+    fun connect(user: User): String {
+        val t = userTypeOf(user)
+        val t2 = userTypeOf.invoke(user)
+        return "role=$role userType=$t same=${t == t2}"
+    }
+}
+
+class WithDefault(
+    private val role: String,
+    private val userTypeOf: (User) -> String = { role },
+) { fun run(u: User) = userTypeOf(u) }
+
+class Optional(private val hook: ((User) -> String)?) {
+    fun run(u: User): String = hook?.invoke(u) ?: "no-hook"
+}
+
+typealias UserTypeResolver = (user: User) -> String
+
+fun interface TypeResolver { fun resolve(user: User): String }
+class Interceptor2(private val resolver: TypeResolver) { fun run(u: User) = resolver.resolve(u) }
+
+open class Config {
+    protected open fun sessionUserType(user: User): String = "MODULE"
+    fun build() = Interceptor("ADMIN", ::sessionUserType)
+    fun build2() = Interceptor2(::sessionUserType)
+}
+class AdminConfig : Config() {
+    override fun sessionUserType(user: User): String = user.type
+}
+
+fun main() {
+    val admin = User("u1", "SUPER_ADMIN")
+    println("A method ref (base): " + Config().build().connect(admin))
+    println("A method ref (override): " + AdminConfig().build().connect(admin))
+    println("B lambda: " + Interceptor("ADMIN") { user -> user.type.lowercase() }.connect(admin))
+    println("C it: " + Interceptor("ADMIN") { it.id }.connect(admin))
+    println("D ignore arg: " + Interceptor("USER") { "FIXED" }.connect(admin))
+    println("E default refs earlier param: " + WithDefault("USER").run(admin))
+    println("F nullable: " + Optional(null).run(admin) + " / " + Optional { it.type }.run(admin))
+    val r: UserTypeResolver = { u -> u.type }
+    println("G typealias: " + Interceptor("ADMIN", r).connect(admin))
+    println("H fun interface + method ref: " + AdminConfig().build2().run(admin) + " / lambda: " + Interceptor2 { it.id }.run(admin))
+    val f: (User) -> String = { it.type }
+    println("I is Function1: " + (f is Function1<*, *>) + " class=" + f.javaClass.interfaces.map { it.name })
+    var counter = 0
+    val counting: (User) -> String = { counter++; "call#$counter" }
+    Interceptor("ADMIN", counting).connect(admin)
+    println("J closure captured var: counter=$counter")
+}
+```
+
+출력:
+
+```
+A method ref (base): role=ADMIN userType=MODULE same=true
+A method ref (override): role=ADMIN userType=SUPER_ADMIN same=true
+B lambda: role=ADMIN userType=super_admin same=true
+C it: role=ADMIN userType=u1 same=true
+D ignore arg: role=USER userType=FIXED same=true
+E default refs earlier param: USER
+F nullable: no-hook / SUPER_ADMIN
+G typealias: role=ADMIN userType=SUPER_ADMIN same=true
+H fun interface + method ref: SUPER_ADMIN / lambda: u1
+I is Function1: true class=[kotlin.jvm.functions.Function1]
+J closure captured var: counter=2
+```
+
+`J`가 2인 이유: `connect` 한 번 안에서 `userTypeOf(user)`와 `userTypeOf.invoke(user)`로 담긴 함수를 두 번 불렀기 때문이다.

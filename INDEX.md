@@ -125,6 +125,10 @@
 - 람다냐 참조냐 고르는 기준 — [8장](kotlin-callable-references.md#8-람다냐-참조냐--고르는-기준)
 - `::class` / `::class.java` — [9장](kotlin-callable-references.md#9-class--같은-기호의-다른-쓰임)
 - Java 메서드 참조와 비교 — [10장](kotlin-callable-references.md#10-java-메서드-참조와-비교)
+- **함수 타입 프로퍼티 `(A) -> B` — 함수를 담는 칸, 부르는 법(`invoke`), 채우는 법(참조·람다·`it`·고정값)** — [11장](kotlin-callable-references.md#11-받는-쪽--함수-타입-프로퍼티는-계산-방법을-끼워-넣는-칸이다)
+- 저장 시점과 실행 시점이 다르다 — 값이 흐르는 순서 — [11.4절](kotlin-callable-references.md#114-계기-코드에서-값이-흐르는-순서)
+- 기본값 · null 허용 함수 타입 · `typealias` · `fun interface` 고르는 법 — [11.5절](kotlin-callable-references.md#115-자주-만나는-변형들)
+- JVM의 `Function1`과 클로저 — [11.6절](kotlin-callable-references.md#116-jvm에서의-실체--function1-객체와-클로저)
 - `KFunction` · `KProperty` — [부록 A.1](kotlin-callable-references.md#a1-참조의-실제-타입--kfunction과-kproperty)
 
 ## 운영 관측성
@@ -162,4 +166,4 @@
 | [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-09-11 |
 | [tls-certificates-and-trust-stores.md](tls-certificates-and-trust-stores.md) | TLS · X.509 인증서 · 신뢰 저장소(PKI) · 런타임별 CA 관리 | 2026-09-16 |
 | [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-09-16 |
-| [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-09-18 |
+| [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·함수 타입 프로퍼티·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-09-18 |
