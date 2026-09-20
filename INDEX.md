@@ -109,6 +109,25 @@
 - cgroup 기초 — [부록 A.1](jvm-memory-and-container-limits.md#a1-cgroup--리눅스가-자원-한도를-거는-방법)
 - Metaspace 두 옵션의 차이 — [부록 A.3](jvm-memory-and-container-limits.md#a3-metaspace의-두-옵션은-이름만-비슷하고-역할이-다르다)
 
+## Docker · 컨테이너 기초
+- 이미지와 컨테이너 — 무엇이 무엇을 만드나, 이미지 안에 든 것, 두 정의에서 단순화된 부분 — [1장](docker-image-layers-and-copy-on-write.md#1-image와-container--무엇이-무엇을-만드나)
+- **이미지는 왜 층으로 쌓이나** — 읽기 전용 차이분 레이어, 이미지 간 공유 — [2장](docker-image-layers-and-copy-on-write.md#2-image는-왜-층으로-쌓이나)
+- Dockerfile instruction과 레이어 — 전부 층을 만들지는 않는다 (`history` 8줄 vs 실제 3 레이어) — [2.3절](docker-image-layers-and-copy-on-write.md#23-dockerfile-instruction과-레이어의-관계--전부-층을-만들지는-않는다)
+- 빌드 캐시 — COPY는 체크섬, RUN은 명령 문자열, 깨지면 뒤는 전부 재실행 — [2.4절](docker-image-layers-and-copy-on-write.md#24-빌드-캐시--앞-레이어를-재사용할-수-있는-이유)
+- **컨테이너 쓰기 레이어 — 복사하지 않고 한 층 얹는다** — [3장](docker-image-layers-and-copy-on-write.md#3-container-writable-layer--복사하지-않고-한-층-얹는다)
+- `docker exec` — 같은 컨테이너에 프로세스 추가, 만든 파일은 쓰기 레이어로, `docker diff` — [4장](docker-image-layers-and-copy-on-write.md#4-docker-exec로-파일을-만들면--새-프로세스-같은-컨테이너)
+- 이미지에 있던 파일을 고치면 — 위층이 아래층을 가린다 (copy-up) — [5장](docker-image-layers-and-copy-on-write.md#5-이미지에-있던-파일을-고치면--위층이-아래층을-가린다)
+- **`stop` · `start` · `rm` — 쓰기 레이어의 수명은 컨테이너 객체의 수명** (종료 코드 137의 이유 포함) — [6장](docker-image-layers-and-copy-on-write.md#6-stop--start--rm--쓰기-레이어의-수명은-컨테이너-객체의-수명이다)
+- Copy-on-Write — `fork()`의 메모리 페이지 CoW — [7장](docker-image-layers-and-copy-on-write.md#7-copy-on-write--미리-복사하지-않고-쓸-때-복사한다)
+- Linux 메모리 CoW vs Docker 파일시스템 CoW — 같은 전략 다른 계층, 페이지 단위 vs 파일 단위 copy-up — [8장](docker-image-layers-and-copy-on-write.md#8-linux-메모리-cow와-docker-파일시스템-cow--같은-전략-다른-계층) · [9장](docker-image-layers-and-copy-on-write.md#9-둘의-중요한-차이--페이지-단위와-파일-단위-copy-up)
+- **OverlayFS — lowerdir · upperdir · merged · workdir · copy-up · whiteout, 컨테이너 안 `/proc/mounts`로 직접 보기** — [10장](docker-image-layers-and-copy-on-write.md#10-overlayfs--여러-디렉터리를-겹쳐-하나의-로-보여-준다)
+- 같은 이미지의 컨테이너 둘 — 공유하는 것(이미지 레이어)과 따로 갖는 것(upperdir) — [11장](docker-image-layers-and-copy-on-write.md#11-같은-이미지로-만든-컨테이너-둘--공유하는-것과-따로-갖는-것)
+- 볼륨으로 이어지는 이유 — [12장](docker-image-layers-and-copy-on-write.md#12-volume으로-이어지는-이유)
+- 전체 개념 연결 두 그림 (명령 관점 · 파일시스템 관점) — [13장](docker-image-layers-and-copy-on-write.md#13-전체-개념-연결)
+- 실습 10단계 (`run`/`exec`/`diff`/`stop`/`start`/`rm`/`history`/`inspect`, 빌드 캐시·copy-up·두 컨테이너) — [14장](docker-image-layers-and-copy-on-write.md#14-실습--10단계로-직접-확인하기)
+- 핵심 5줄 · 자주 헷갈리는 오해 8가지 · 다음 학습 순서 (Volume → OverlayFS → Container=Process → namespace → cgroup → containerd/runc → OCI) — [15장](docker-image-layers-and-copy-on-write.md#15-마지막-정리)
+- Docker Desktop(containerd 스냅샷터)과 Linux Engine(overlay2)의 경로·표시 차이 — [부록 A.1](docker-image-layers-and-copy-on-write.md#a1-docker-desktop과-linux-docker-engine의-차이)
+
 ## AWS 계정 · 조직 · 권한
 - Dev Weekly 한 장 요약 (계정·조직 축 vs 로그인·권한 축) — [요약과 구조도](aws-organizations-accounts-and-access.md#dev-weekly-한-장-요약--계정과-로그인-주체를-두-축으로-보기)
 - AWS 조직의 전체 구조 (Organization · 조직의 Root · OU · 관리 계정 · 멤버 계정) — [2장](aws-organizations-accounts-and-access.md#2-aws-조직의-전체-구조--무엇이-무엇을-담고-있나)
@@ -181,3 +200,4 @@
 | [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-09-16 |
 | [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·함수 타입 프로퍼티·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-09-18 |
 | [jpa-hibernate-fundamentals-and-n-plus-one.md](jpa-hibernate-fundamentals-and-n-plus-one.md) | JPA 기초 — JPA/Hibernate/Spring Data JPA · JPQL · LAZY/EAGER · N+1 · Fetch Join/EntityGraph/Batch Fetching · 영속성 컨텍스트 · Dirty Checking · 면접 체크리스트 | 2026-09-20 |
+| [docker-image-layers-and-copy-on-write.md](docker-image-layers-and-copy-on-write.md) | Docker 이미지·컨테이너 기초 — 레이어 · 쓰기 레이어 · Copy-on-Write · OverlayFS · 데이터 수명(stop/start/rm) · 볼륨 입구 | 2026-09-20 |
