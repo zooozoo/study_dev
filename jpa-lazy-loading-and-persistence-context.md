@@ -5,6 +5,8 @@ ORM(Object-Relational Mapping — 객체와 관계형 DB 테이블을 자동으�
 작성일: 2026-09-07
 기준 버전: Hibernate ORM 6.6.29.Final · Spring Boot 3.5.6 · Spring Data JPA 3.5.4 (문서 안의 측정값은 모두 이 조합에서 직접 실행해 얻었다)
 
+> 기초부터 보려면: JPA/Hibernate/Spring Data JPA 관계 · JPQL · LAZY/EAGER · N+1과 세 가지 해법(Fetch Join · EntityGraph · Batch Fetching) · Dirty Checking을 한 흐름으로 정리한 [JPA · Hibernate 기초와 N+1 문제](jpa-hibernate-fundamentals-and-n-plus-one.md)를 먼저 읽고 이 문서로 오면 순서가 맞는다.
+
 ---
 
 ## 이 문서를 쓰게 만든 상황

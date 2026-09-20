@@ -69,7 +69,20 @@
 - 배치 트랜잭션 매니저 선택 기준, 메타데이터 원자성이라는 대가 — [6장](spring-transaction-boundaries-and-batch.md#6-배치에서-어떤-트랜잭션-매니저를-고를-것인가)
 - 트랜잭션 경계 변경을 테스트로 잡는 법 (판별력 있는 통합 테스트, 실 DB A/B) — [10장](spring-transaction-boundaries-and-batch.md#10-트랜잭션-경계를-테스트로-잡는-법)
 
-## JPA · 영속성 컨텍스트
+## JPA · 영속성 컨텍스트 · N+1
+- **JPA · Hibernate · Spring Data JPA의 역할 분담** (표준 스펙 vs 구현체 vs Repository 추상화) — [1장](jpa-hibernate-fundamentals-and-n-plus-one.md#1-jpa--hibernate--spring-data-jpa--누가-무엇을-하나)
+- SQL과 JPQL의 차이 (테이블/컬럼 vs 엔티티/프로퍼티, Hibernate가 사이에서 하는 번역, JPQL은 HQL의 부분집합) — [2장](jpa-hibernate-fundamentals-and-n-plus-one.md#2-sql과-jpql--테이블을-보느냐-엔티티를-보느냐)
+- LAZY vs EAGER — 왜 기본은 LAZY이고 EAGER는 목록 조회의 N+1을 못 막나 — [3장](jpa-hibernate-fundamentals-and-n-plus-one.md#3-lazy와-eager--연관-엔티티를-언제-읽을-것인가)
+- **N+1 문제 — 정의 · 재현 · "LAZY라서"가 아닌 진짜 원인** — [4장](jpa-hibernate-fundamentals-and-n-plus-one.md#4-n1-문제--목록-하나가-쿼리-101번이-되는-순간)
+- Fetch Join과 API별 조회 전략 (매핑은 LAZY, 판단은 쿼리에서) — [5장](jpa-hibernate-fundamentals-and-n-plus-one.md#5-fetch-join--이번-쿼리에서는-팀이-꼭-필요하다)
+- EntityGraph — Fetch Join과 같은 목적의 선언형 표현 — [6장](jpa-hibernate-fundamentals-and-n-plus-one.md#6-entitygraph--같은-목적을-어노테이션으로-선언하기) · FETCH vs LOAD [부록 A.3](jpa-hibernate-fundamentals-and-n-plus-one.md#a3-entitygraph의-fetch와-load-타입)
+- **Batch Fetching (`default_batch_fetch_size`) 과 Fetch Join의 차이** — [7장](jpa-hibernate-fundamentals-and-n-plus-one.md#7-batch-fetching--나중에-읽되-묶어서-읽는다) · [7.3절](jpa-hibernate-fundamentals-and-n-plus-one.md#73-fetch-join과-batch-fetching은-무엇이-다른가)
+- 영속성 컨텍스트와 1차 캐시 — 정의, 동작, "1차 캐시가 아닌 것" — [8장](jpa-hibernate-fundamentals-and-n-plus-one.md#8-persistence-context--jpa가-엔티티를-들고-있는-공간)
+- Dirty Checking — 스냅샷 비교, flush 시점, `save()` 없이 UPDATE가 안 나가는 경우 — [9장](jpa-hibernate-fundamentals-and-n-plus-one.md#9-dirty-checking--바꾸기만-하면-update가-나간다)
+- 전체 개념 연결 한 장 · 핵심 요약 10문장 · 면접 질문 체크리스트 — [10장](jpa-hibernate-fundamentals-and-n-plus-one.md#10-전체-개념-연결) · [11장](jpa-hibernate-fundamentals-and-n-plus-one.md#11-핵심-요약-10문장) · [12장](jpa-hibernate-fundamentals-and-n-plus-one.md#12-면접-질문-체크리스트)
+- Kotlin 엔티티 설정 — `kotlin-jpa`(no-arg)와 `allOpen`(프록시용 open) — [부록 A.1](jpa-hibernate-fundamentals-and-n-plus-one.md#a1-kotlin-엔티티-설정--no-arg-생성자와-open-클래스)
+- Fetch Join의 함정 — 컬렉션 페이징이 메모리에서 되는 것(HHH90003004), 컬렉션 둘 fetch의 카테시안 곱 — [부록 A.2](jpa-hibernate-fundamentals-and-n-plus-one.md#a2-fetch-join의-두-가지-함정--페이징과-컬렉션-둘)
+- SQL 로그로 쿼리 수 세어 보기 — [부록 A.4](jpa-hibernate-fundamentals-and-n-plus-one.md#a4-sql-로그로-직접-확인하기)
 - 영속성 컨텍스트란 무엇인가 (동일성 보장 · 변경 감지 · 쓰기 지연) — [2장](jpa-lazy-loading-and-persistence-context.md#2-orm은-무엇을-대신해-주나--엔티티와-영속성-컨텍스트)
 - 1차 캐시와 그 수명 — [3장](jpa-lazy-loading-and-persistence-context.md#3-영속성-컨텍스트는-1차-캐시다)
 - 지연 로딩과 프록시 — 무엇이 로딩을 발동시키나 — [4장](jpa-lazy-loading-and-persistence-context.md#4-지연-로딩--프록시는-언제-진짜가-되나)
@@ -167,3 +180,4 @@
 | [tls-certificates-and-trust-stores.md](tls-certificates-and-trust-stores.md) | TLS · X.509 인증서 · 신뢰 저장소(PKI) · 런타임별 CA 관리 | 2026-09-16 |
 | [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-09-16 |
 | [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·함수 타입 프로퍼티·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-09-18 |
+| [jpa-hibernate-fundamentals-and-n-plus-one.md](jpa-hibernate-fundamentals-and-n-plus-one.md) | JPA 기초 — JPA/Hibernate/Spring Data JPA · JPQL · LAZY/EAGER · N+1 · Fetch Join/EntityGraph/Batch Fetching · 영속성 컨텍스트 · Dirty Checking · 면접 체크리스트 | 2026-09-20 |
