@@ -81,7 +81,7 @@
 - Dirty Checking — 스냅샷 비교, flush 시점, `save()` 없이 UPDATE가 안 나가는 경우 — [9장](jpa-hibernate-fundamentals-and-n-plus-one.md#9-dirty-checking--바꾸기만-하면-update가-나간다)
 - 전체 개념 연결 한 장 · 핵심 요약 10문장 · 면접 질문 체크리스트 — [10장](jpa-hibernate-fundamentals-and-n-plus-one.md#10-전체-개념-연결) · [11장](jpa-hibernate-fundamentals-and-n-plus-one.md#11-핵심-요약-10문장) · [12장](jpa-hibernate-fundamentals-and-n-plus-one.md#12-면접-질문-체크리스트)
 - Kotlin 엔티티 설정 — `kotlin-jpa`(no-arg)와 `allOpen`(프록시용 open) — [부록 A.1](jpa-hibernate-fundamentals-and-n-plus-one.md#a1-kotlin-엔티티-설정--no-arg-생성자와-open-클래스)
-- Fetch Join의 함정 — 컬렉션 페이징이 메모리에서 되는 것(HHH90003004), 컬렉션 둘 fetch의 카테시안 곱 — [부록 A.2](jpa-hibernate-fundamentals-and-n-plus-one.md#a2-fetch-join의-두-가지-함정--페이징과-컬렉션-둘)
+- Fetch Join의 함정 — 컬렉션 페이징이 메모리에서 되는 것(HHH90003004), 컬렉션 둘 fetch의 카테시안 곱(3명 × 2개 표로 보는 이유 · `MultipleBagFetchException` · 세 가지 시도 비교) — [부록 A.2](jpa-hibernate-fundamentals-and-n-plus-one.md#a2-fetch-join의-두-가지-함정--페이징과-컬렉션-둘)
 - SQL 로그로 쿼리 수 세어 보기 — [부록 A.4](jpa-hibernate-fundamentals-and-n-plus-one.md#a4-sql-로그로-직접-확인하기)
 - 영속성 컨텍스트란 무엇인가 (동일성 보장 · 변경 감지 · 쓰기 지연) — [2장](jpa-lazy-loading-and-persistence-context.md#2-orm은-무엇을-대신해-주나--엔티티와-영속성-컨텍스트)
 - 1차 캐시와 그 수명 — [3장](jpa-lazy-loading-and-persistence-context.md#3-영속성-컨텍스트는-1차-캐시다)

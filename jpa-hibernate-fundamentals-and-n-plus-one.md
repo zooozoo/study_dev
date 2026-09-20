@@ -912,15 +912,184 @@ Hibernate 쿼리 언어 문서도 "fetch join은 보통 limit이나 페이징이
 
 **함정 2 — 컬렉션 둘을 동시에 fetch하면 카테시안 곱.**
 
-팀에 `members`(100명)와 `projects`(20개)가 있을 때 둘 다 `JOIN FETCH`하면 JOIN 결과는 100 × 20 = 2,000행이다. 데이터가 중복되어 부풀고, Hibernate는 두 컬렉션이 모두 `List`(bag)면 아예 `MultipleBagFetchException`("쿼리가 여러 bag을 동시에 fetch하려 한다")으로 막는다. 문서도 to-many 연관 여러 개를 병렬로 fetch하면 카테시안 곱이 되어 성능 위험이 있다고 경고한다. 해결은 **컬렉션은 하나만 fetch join하고 나머지는 Batch Fetching**에 맡기는 것이다.
+팀에 `members`(100명)와 `projects`(20개)가 있을 때 둘 다 `JOIN FETCH`하면 JOIN 결과는 100 × 20 = 2,000행이다. 데이터가 중복되어 부풀고, Hibernate는 두 컬렉션이 모두 `List`(bag)면 아예 `MultipleBagFetchException`("cannot simultaneously fetch multiple bags")으로 막는다. 문서도 to-many 연관 여러 개를 병렬로 fetch하면 카테시안 곱이 되어 성능 위험이 있다고 경고한다. 해결은 **컬렉션은 하나만 fetch join하고 나머지는 Batch Fetching**에 맡기는 것이다.
+
+왜 "곱"이 되는지는 작은 숫자로 SQL 결과를 직접 그려 보면 바로 보인다.
+
+**왜 곱셈이 되나 — SQL의 한 행은 조합 하나만 담는다.**
+
+팀 "개발팀"에 회원 3명(A, B, C)이 있다. `JOIN FETCH t.members` 한 개만 하면 SQL 결과는 이렇다.
+
+```text
+team_name | member_name
+----------+------------
+개발팀     | A
+개발팀     | B
+개발팀     | C
+```
+
+팀은 하나인데 3행이다. SQL은 "팀 1개 안에 회원 리스트가 있다"는 구조를 표현할 수 없어서 회원 한 명당 팀 정보를 한 번씩 다시 붙여 준다. 여기까지는 Hibernate가 팀 id를 보고 같은 팀으로 합쳐 주니 문제없다.
+
+같은 팀에 프로젝트 2개(P1, P2)도 있고 `JOIN FETCH t.projects`까지 붙이면, SQL은 먼저 팀에 회원을 붙여 3행을 만들고 **그 3행 각각에** 프로젝트를 붙인다.
+
+```text
+team_name | member_name | project_name
+----------+-------------+-------------
+개발팀     | A           | P1
+개발팀     | A           | P2
+개발팀     | B           | P1
+개발팀     | B           | P2
+개발팀     | C           | P1
+개발팀     | C           | P2
+```
+
+회원 3 × 프로젝트 2 = 6행. 이것이 카테시안 곱(모든 회원과 모든 프로젝트를 한 번씩 짝지은 표)이다. 회원 A와 프로젝트 P1은 아무 관계가 없는데, 둘 다 같은 팀 소속이라는 이유로 한 행에 놓였을 뿐이다. 진짜 정보는 "회원 3명, 프로젝트 2개" 5건인데 6행을 받아 온다. 컬렉션이 셋이면 셋을 곱하고, 팀이 여러 개면 팀마다 이만큼씩 나온다.
+
+**bag이면 왜 예외까지 나나.** 위 6행에서 회원 A가 두 번 나온다. Hibernate는 이것이 JOIN 때문에 생긴 중복인지, 원래 리스트에 A가 두 번 들어 있는 것인지 구분해야 한다.
+
+- 컬렉션이 `Set`이면 중복이 있을 수 없으니 그냥 합치면 된다. 예외는 없지만 행 수 폭발은 그대로다.
+- 컬렉션이 `List`이고 `@OrderColumn`이 없으면 Hibernate는 bag(중복을 허용하는 순서 없는 자루)으로 본다. bag은 A가 두 번 있는 것이 정상일 수도 있어서 판단 근거가 없다. 그래서 bag 둘을 동시에 fetch하면 결과를 믿을 수 없다고 보고 `org.hibernate.loader.MultipleBagFetchException`으로 막는다.
+
+Kotlin에서 흔히 쓰는 `val members: MutableList<Member> = mutableListOf()` 선언이 바로 bag이라 실무에서 자주 만나는 예외다.
+
+**"하나만 fetch join"의 대상은 엔티티가 아니라 컬렉션(관계선)이다.**
+
+팀은 조회의 출발점이라 항상 가져온다. 팀에 매달린 컬렉션이 여러 개일 때 그중 **하나만** `JOIN FETCH`로 붙이고 나머지는 Batch Fetching에 맡긴다는 뜻이다.
+
+```text
+          Team  (출발점, 항상 조회)
+           │
+     ┌─────┴──────┐
+     │            │
+  members      projects      ← 이 두 선 중 하나만 JOIN FETCH
+ (회원 목록)  (프로젝트 목록)
+```
+
+실제 코드로 세 가지 시도를 비교한다. 상황은 "팀 목록 화면에 팀 이름, 회원 이름들, 프로젝트 이름들을 한 번에 보여주기"이고, 팀 10개, 팀마다 회원 100명, 프로젝트 20개다.
+
+```kotlin
+@Entity
+class Team(
+    @Id @GeneratedValue val id: Long? = null,
+    var name: String,
+) {
+    @OneToMany(mappedBy = "team")
+    val members: MutableList<Member> = mutableListOf()    // 컬렉션 1 (bag)
+
+    @OneToMany(mappedBy = "team")
+    val projects: MutableList<Project> = mutableListOf()  // 컬렉션 2 (bag)
+}
+
+@Entity
+class Project(
+    @Id @GeneratedValue val id: Long? = null,
+    var name: String,
+    @ManyToOne(fetch = FetchType.LAZY) val team: Team,
+)
+// Member는 3장의 엔티티 그대로
+```
+
+```kotlin
+@Service
+class TeamQueryService(private val teamRepository: TeamRepository) {
+    @Transactional(readOnly = true)
+    fun teamSummaries(): List<TeamSummary> =
+        teamRepository.findAllForSummary().map { team ->
+            TeamSummary(
+                teamName = team.name,
+                memberNames = team.members.map { it.name },    // members 접근
+                projectNames = team.projects.map { it.name },  // projects 접근
+            )
+        }
+}
+```
+
+서비스 코드는 세 시도 모두 동일하고, 리포지토리의 `findAllForSummary`만 바뀐다.
+
+시도 1 — fetch join 없음:
+
+```kotlin
+@Query("SELECT t FROM Team t")
+fun findAllForSummary(): List<Team>
+```
+
+```text
+select ... from team                          -- 1번
+select ... from member  where team_id = ?     -- 팀마다 1번, 총 10번
+select ... from project where team_id = ?     -- 팀마다 1번, 총 10번
+```
+
+쿼리 21번. 4장의 N+1인데 컬렉션이 둘이라 N이 두 번 붙는다.
+
+시도 2 — 둘 다 fetch join:
+
+```kotlin
+@Query("SELECT DISTINCT t FROM Team t JOIN FETCH t.members JOIN FETCH t.projects")
+fun findAllForSummary(): List<Team>
+```
+
+두 컬렉션이 모두 `MutableList`(bag)이므로 SQL이 나가기 전에 실패한다.
+
+```text
+org.hibernate.loader.MultipleBagFetchException:
+  cannot simultaneously fetch multiple bags: [Team.members, Team.projects]
+```
+
+둘 중 하나를 `MutableSet`으로 바꾸면 예외는 사라지지만 SQL 결과가 팀당 100 × 20 = 2,000행, 10팀이면 20,000행이 된다. 실제 정보는 팀당 120건, 총 1,200건이다. 예외가 없어졌을 뿐 문제는 그대로다.
+
+시도 3 — members만 fetch join, projects는 Batch Fetching:
+
+```kotlin
+@Query("SELECT DISTINCT t FROM Team t JOIN FETCH t.members")
+fun findAllForSummary(): List<Team>
+```
+
+```yaml
+spring:
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+```
+
+```text
+-- 1번: 팀 + 회원을 한 번에 (팀당 100행, 총 1,000행)
+select t.*, m.* from team t join member m on m.team_id = t.id
+
+-- 2번: 서비스에서 team.projects 를 처음 건드리는 순간 자동 실행 (총 200행)
+select p.* from project p where p.team_id in (1,2,3,4,5,6,7,8,9,10)
+```
+
+리포지토리에서 `JOIN FETCH t.projects` 한 구절을 뺐을 뿐이고 서비스 코드는 그대로다. 대신 `default_batch_fetch_size`가 "아직 안 가져온 컬렉션은 IN으로 한꺼번에"를 맡는다. 곱셈이 생긴 원인은 두 컬렉션을 한 쿼리, 한 표에 담으려 한 것이므로, 표를 둘로 나누면 곱셈(100 × 20)이 덧셈(100 + 20)으로 바뀐다.
+
+| | 쿼리 수 | 받아오는 행 수 |
+|---|---|---|
+| 시도 1. fetch join 없음 | 21 | 1,210 |
+| 시도 2. 둘 다 fetch join (`Set`으로 예외만 피한 경우) | 1 | 20,000 |
+| 시도 3. 하나만 fetch join + Batch Fetching | 2 | 1,200 |
+
+**어느 컬렉션을 fetch join 할지.** 정해진 규칙은 없고, 보통 항상 같이 쓰는 쪽이나 더 큰 쪽을 fetch join 한다. 위에서는 회원(100명)이 더 크니 회원을 fetch join 하고 프로젝트를 batch로 돌렸다. 반대로 해도 된다.
+
+그리고 **아무것도 fetch join 하지 않고 둘 다 Batch Fetching에 맡기는 것**도 많이 쓴다. 시도 1과 같은 `SELECT t FROM Team t`에 batch 설정만 켜져 있으면 이렇게 된다.
+
+```text
+select ... from team                                       -- 10행
+select ... from member  where team_id in (1..10)           -- 1,000행
+select ... from project where team_id in (1..10)           -- 200행
+```
+
+쿼리 3번, 1,210행. 시도 3보다 쿼리 하나 더 나가지만 JPQL에 손댈 것이 없고, 팀 목록에 페이징을 걸어도 그대로 동작한다. 팀 목록 화면에 페이징이 있다면 이쪽이 정답에 가깝다. 컬렉션 fetch join 자체가 페이징과 안 맞기 때문이다(위 함정 1).
 
 정리:
 
 ```text
 @ManyToOne / @OneToOne 연관   → Fetch Join / EntityGraph 로 첫 쿼리에
-@OneToMany 컬렉션 + 페이징    → Batch Fetching (default_batch_fetch_size)
-@OneToMany 컬렉션 여러 개     → 하나만 Fetch Join, 나머지는 Batch Fetching
+@OneToMany 컬렉션 + 페이징    → Batch Fetching (default_batch_fetch_size), fetch join 없이
+@OneToMany 컬렉션 여러 개     → 최대 하나만 Fetch Join, 나머지는 Batch Fetching
+                                (페이징까지 있으면 하나도 fetch join 하지 말고 전부 Batch)
 ```
+
+한 문장: SQL의 한 행은 조합 하나만 담을 수 있어서, 독립적인 리스트 둘을 한 쿼리에 넣으면 "리스트 두 개"가 아니라 "모든 짝의 표"가 되어 행 수가 곱셈으로 불어난다.
 
 ## A.3 EntityGraph의 FETCH와 LOAD 타입
 
