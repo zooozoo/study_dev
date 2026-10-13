@@ -53,6 +53,7 @@
 - WAF — [10장](realtime-web-networking-cors-infra.md#10-waf--웹-방화벽)
 
 ## 전송 계층 기초
+- 포트·소켓·fd의 차이, `accept()`가 반환하는 연결 소켓과 실제 데이터 흐름 — [부록 A.2](realtime-web-networking-cors-infra.md#a2-소켓-하나로-요청을-여러-번-주고받는다는-게-무슨-뜻인가)
 - TCP 연결 종료(4-way, TIME_WAIT), 커널/앱 경계, 프록시 절단, 실패 판정 — [부록 A](realtime-web-networking-cors-infra.md#a1-http는-응답이-끝나면-연결을-닫는다)
 
 ## Spring · 트랜잭션
@@ -190,7 +191,7 @@
 ---
 | 문서 | 다루는 카테고리 | 작성/갱신 |
 |---|---|---|
-| [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-08-18 |
+| [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-13 |
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-09-02 |
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-09-07 |
 | [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-09-07 |
