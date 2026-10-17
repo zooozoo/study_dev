@@ -5,12 +5,14 @@
 > 규모 확장 규칙: 카테고리는 처음엔 한 파일의 **섹션**으로 시작 → 내용이 쌓이면 **독립 파일**로 분리 → 파일이 여럿 되면 **폴더**로 승격. 분리·승격 시 이 인덱스의 링크만 갱신하면 된다.
 
 ## 네트워크 · 실시간 통신
+- 상단 복습 — [핵심 요약](realtime-web-networking-cors-infra.md#핵심-요약) · [면접 질문 체크리스트](realtime-web-networking-cors-infra.md#면접-질문-체크리스트)
 - HTTP의 한계와 keep-alive — [2장](realtime-web-networking-cors-infra.md#2-먼저-http부터--왜-실시간-통신이-어려운가) · [부록 A.1~A.2](realtime-web-networking-cors-infra.md#a1-http는-응답이-끝나면-연결을-닫는다)
 - WebSocket (Upgrade 핸드셰이크, ws/wss, 하트비트) — [3장](realtime-web-networking-cors-infra.md#3-websocket--한-번-연결해두고-계속-쓰는-방식)
 - STOMP (WebSocket 위의 메시징 규약) — [4장](realtime-web-networking-cors-infra.md#4-stomp--websocket-위에-얹는-대화-규칙)
 - SockJS 폴백 사다리 (XHR streaming/polling, 폴백의 대가) — [6장](realtime-web-networking-cors-infra.md#6-sockjs--websocket이-막히면-http로-흉내내기)
 
 ## 암호학 기초
+- 상단 복습 — [핵심 요약](cryptography-fundamentals-for-backend.md#핵심-요약) · [면접 질문 체크리스트](cryptography-fundamentals-for-backend.md#면접-질문-체크리스트)
 - **암호학이 지키려는 네 가지** (기밀성·무결성·인증·부인방지)와 기술 매핑 — [1장](cryptography-fundamentals-for-backend.md#1-암호학은-무엇을-지키려고-있나--네-가지-목적)
 - "양방향 키 / 단방향 키"라는 구분이 정확하지 않은 이유 — [2장](cryptography-fundamentals-for-backend.md#2-먼저-용어를-바로잡자--양방향-키--단방향-키는-정확한-구분이-아니다)
 - 대칭키 암호 (AES·ChaCha20, AEAD, 속도 실측) 와 키 전달 문제 — [3장](cryptography-fundamentals-for-backend.md#3-대칭키-암호--빠르지만-키를-건네줄-방법이-없다)
@@ -24,10 +26,11 @@
 - 키 교환 (DH·ECDH·ECDHE) 과 전방 비밀성, TLS 1.3 에서 키 교환이 스위트에서 분리된 것 — [8장](cryptography-fundamentals-for-backend.md#8-키-교환--비밀을-보내지-않고-비밀을-공유하는-법)
 - 하이브리드 암호 — 왜 RSA 로 전부 암호화하지 않나 — [9장](cryptography-fundamentals-for-backend.md#9-하이브리드-암호--왜-rsa-로-전부-암호화하지-않나)
 - **primitive 가 TLS 안에서 조립되는 큰 그림** — [10장](cryptography-fundamentals-for-backend.md#10-여기까지를-tls-한-장으로)
-- 스스로 답해 보기 10문항 — [11장](cryptography-fundamentals-for-backend.md#11-스스로-답해-보기)
+- 스스로 답해 보기 10문항 — [상단 면접 질문](cryptography-fundamentals-for-backend.md#면접-질문-체크리스트)
 - 실습 명령 모음 — [부록 A.2](cryptography-fundamentals-for-backend.md#a2-실습-명령-모음)
 
 ## TLS · 인증서 · 신뢰 저장소
+- 상단 복습 — [핵심 요약](tls-certificates-and-trust-stores.md#핵심-요약) · [면접 질문 체크리스트](tls-certificates-and-trust-stores.md#면접-질문-체크리스트)
 - 이 주제를 읽는 데 필요한 암호학 요약 (도구 한 표, 전자서명, 인증 ≠ 기밀성) — [2장](tls-certificates-and-trust-stores.md#2-여기서-필요한-암호학)
 - 인증서란 무엇인가 (X.509 필드 읽기, `sha256WithRSAEncryption` 이름의 오해) — [3장](tls-certificates-and-trust-stores.md#3-인증서란-무엇인가--공개키에-이름표를-붙인-것)
 - CA와 서명 체인, 루트가 자기서명인 이유 — [4장](tls-certificates-and-trust-stores.md#4-ca-와-서명-체인--보증인을-세운다)
@@ -57,6 +60,7 @@
 - TCP 연결 종료(4-way, TIME_WAIT), 커널/앱 경계, 프록시 절단, 실패 판정 — [부록 A](realtime-web-networking-cors-infra.md#a1-http는-응답이-끝나면-연결을-닫는다)
 
 ## Spring · 트랜잭션
+- 상단 복습 — [핵심 요약](spring-transaction-boundaries-and-batch.md#핵심-요약) · [면접 질문 체크리스트](spring-transaction-boundaries-and-batch.md#면접-질문-체크리스트)
 - 트랜잭션의 기초 (커넥션·행 잠금·커밋, 오래 열린 트랜잭션이 위험한 이유) — [2장](spring-transaction-boundaries-and-batch.md#2-트랜잭션이란-무엇인가--커넥션-잠금-커밋)
 - `@Transactional`의 실체 (프록시, 전파, 참여자는 커밋하지 않는다) — [3장](spring-transaction-boundaries-and-batch.md#3-transactional의-실체--프록시와-전파)
 - 트랜잭션 매니저 (전략 인터페이스와 구현체들, Boot 자동설정) — [4장](spring-transaction-boundaries-and-batch.md#4-트랜잭션-매니저--전략-인터페이스와-구현체들)
@@ -71,6 +75,7 @@
 - 트랜잭션 경계 변경을 테스트로 잡는 법 (판별력 있는 통합 테스트, 실 DB A/B) — [10장](spring-transaction-boundaries-and-batch.md#10-트랜잭션-경계를-테스트로-잡는-법)
 
 ## JPA · 영속성 컨텍스트 · N+1
+- 상단 복습 — [핵심 요약](jpa-hibernate-fundamentals-and-n-plus-one.md#핵심-요약) · [면접 질문 체크리스트](jpa-hibernate-fundamentals-and-n-plus-one.md#면접-질문-체크리스트)
 - **JPA · Hibernate · Spring Data JPA의 역할 분담** (표준 스펙 vs 구현체 vs Repository 추상화) — [1장](jpa-hibernate-fundamentals-and-n-plus-one.md#1-jpa--hibernate--spring-data-jpa--누가-무엇을-하나)
 - SQL과 JPQL의 차이 (테이블/컬럼 vs 엔티티/프로퍼티, Hibernate가 사이에서 하는 번역, JPQL은 HQL의 부분집합) — [2장](jpa-hibernate-fundamentals-and-n-plus-one.md#2-sql과-jpql--테이블을-보느냐-엔티티를-보느냐)
 - LAZY vs EAGER — 왜 기본은 LAZY이고 EAGER는 목록 조회의 N+1을 못 막나 — [3장](jpa-hibernate-fundamentals-and-n-plus-one.md#3-lazy와-eager--연관-엔티티를-언제-읽을-것인가)
@@ -80,10 +85,11 @@
 - **Batch Fetching (`default_batch_fetch_size`) 과 Fetch Join의 차이** — [7장](jpa-hibernate-fundamentals-and-n-plus-one.md#7-batch-fetching--나중에-읽되-묶어서-읽는다) · [7.3절](jpa-hibernate-fundamentals-and-n-plus-one.md#73-fetch-join과-batch-fetching은-무엇이-다른가)
 - 영속성 컨텍스트와 1차 캐시 — 정의, 동작, "1차 캐시가 아닌 것" — [8장](jpa-hibernate-fundamentals-and-n-plus-one.md#8-persistence-context--jpa가-엔티티를-들고-있는-공간)
 - Dirty Checking — 스냅샷 비교, flush 시점, `save()` 없이 UPDATE가 안 나가는 경우 — [9장](jpa-hibernate-fundamentals-and-n-plus-one.md#9-dirty-checking--바꾸기만-하면-update가-나간다)
-- 전체 개념 연결 한 장 · 핵심 요약 10문장 · 면접 질문 체크리스트 — [10장](jpa-hibernate-fundamentals-and-n-plus-one.md#10-전체-개념-연결) · [11장](jpa-hibernate-fundamentals-and-n-plus-one.md#11-핵심-요약-10문장) · [12장](jpa-hibernate-fundamentals-and-n-plus-one.md#12-면접-질문-체크리스트)
+- 전체 개념 연결 한 장 · 핵심 요약 10문장 · 면접 질문 체크리스트 — [10장](jpa-hibernate-fundamentals-and-n-plus-one.md#10-전체-개념-연결) · [상단 핵심 요약](jpa-hibernate-fundamentals-and-n-plus-one.md#핵심-요약) · [상단 면접 질문](jpa-hibernate-fundamentals-and-n-plus-one.md#면접-질문-체크리스트)
 - Kotlin 엔티티 설정 — `kotlin-jpa`(no-arg)와 `allOpen`(프록시용 open) — [부록 A.1](jpa-hibernate-fundamentals-and-n-plus-one.md#a1-kotlin-엔티티-설정--no-arg-생성자와-open-클래스)
 - Fetch Join의 함정 — 컬렉션 페이징이 메모리에서 되는 것(HHH90003004), 컬렉션 둘 fetch의 카테시안 곱(3명 × 2개 표로 보는 이유 · `MultipleBagFetchException` · 세 가지 시도 비교) — [부록 A.2](jpa-hibernate-fundamentals-and-n-plus-one.md#a2-fetch-join의-두-가지-함정--페이징과-컬렉션-둘)
 - SQL 로그로 쿼리 수 세어 보기 — [부록 A.4](jpa-hibernate-fundamentals-and-n-plus-one.md#a4-sql-로그로-직접-확인하기)
+- 상단 복습 — [핵심 요약](jpa-lazy-loading-and-persistence-context.md#핵심-요약) · [면접 질문 체크리스트](jpa-lazy-loading-and-persistence-context.md#면접-질문-체크리스트)
 - 영속성 컨텍스트란 무엇인가 (동일성 보장 · 변경 감지 · 쓰기 지연) — [2장](jpa-lazy-loading-and-persistence-context.md#2-orm은-무엇을-대신해-주나--엔티티와-영속성-컨텍스트)
 - 1차 캐시와 그 수명 — [3장](jpa-lazy-loading-and-persistence-context.md#3-영속성-컨텍스트는-1차-캐시다)
 - 지연 로딩과 프록시 — 무엇이 로딩을 발동시키나 — [4장](jpa-lazy-loading-and-persistence-context.md#4-지연-로딩--프록시는-언제-진짜가-되나)
@@ -99,6 +105,7 @@
 - `open-in-view` — [부록 A.3](jpa-lazy-loading-and-persistence-context.md#a3-open-in-view--지연-로딩의-수명을-http-요청까지-늘리는-스위치)
 
 ## JVM 메모리 · 컨테이너
+- 상단 복습 — [핵심 요약](jvm-memory-and-container-limits.md#핵심-요약) · [면접 질문 체크리스트](jvm-memory-and-container-limits.md#면접-질문-체크리스트)
 - 종료 코드 읽는 법 (128+N, 137이 특별한 이유) — [2장](jvm-memory-and-container-limits.md#2-프로세스가-죽는다는-것--종료-코드부터) · [부록 A.2](jvm-memory-and-container-limits.md#a2-종료-코드-빠른-참조)
 - 힙 밖의 메모리 (Metaspace·code cache·스레드 스택·direct buffer) — [4장](jvm-memory-and-container-limits.md#4-jvm이-쓰는-메모리는-힙만이-아니다) · [부록 A.4](jvm-memory-and-container-limits.md#a4-왜-메모리-사용량rss이-힙보다-큰가)
 - 컨테이너 안의 JVM (UseContainerSupport, MaxRAMPercentage와 그 기본값) — [5장](jvm-memory-and-container-limits.md#5-컨테이너-안의-jvm은-자기-몫을-어떻게-아나)
@@ -111,6 +118,7 @@
 - Metaspace 두 옵션의 차이 — [부록 A.3](jvm-memory-and-container-limits.md#a3-metaspace의-두-옵션은-이름만-비슷하고-역할이-다르다)
 
 ## Docker · 컨테이너 기초
+- 상단 복습 — [핵심 요약](docker-image-layers-and-copy-on-write.md#핵심-요약) · [면접 질문 체크리스트](docker-image-layers-and-copy-on-write.md#면접-질문-체크리스트)
 - 이미지와 컨테이너 — 무엇이 무엇을 만드나, 이미지 안에 든 것, 두 정의에서 단순화된 부분 — [1장](docker-image-layers-and-copy-on-write.md#1-image와-container--무엇이-무엇을-만드나)
 - **이미지는 왜 층으로 쌓이나** — 읽기 전용 차이분 레이어, 이미지 간 공유 — [2장](docker-image-layers-and-copy-on-write.md#2-image는-왜-층으로-쌓이나)
 - Dockerfile instruction과 레이어 — 전부 층을 만들지는 않는다 (`history` 8줄 vs 실제 3 레이어) — [2.3절](docker-image-layers-and-copy-on-write.md#23-dockerfile-instruction과-레이어의-관계--전부-층을-만들지는-않는다)
@@ -126,11 +134,12 @@
 - 볼륨으로 이어지는 이유 — [12장](docker-image-layers-and-copy-on-write.md#12-volume으로-이어지는-이유)
 - 전체 개념 연결 두 그림 (명령 관점 · 파일시스템 관점) — [13장](docker-image-layers-and-copy-on-write.md#13-전체-개념-연결)
 - 실습 10단계 (`run`/`exec`/`diff`/`stop`/`start`/`rm`/`history`/`inspect`, 빌드 캐시·copy-up·두 컨테이너) — [14장](docker-image-layers-and-copy-on-write.md#14-실습--10단계로-직접-확인하기)
-- 핵심 5줄 · 자주 헷갈리는 오해 8가지 · 다음 학습 순서 (Volume → OverlayFS → Container=Process → namespace → cgroup → containerd/runc → OCI) — [15장](docker-image-layers-and-copy-on-write.md#15-마지막-정리)
+- 자주 헷갈리는 오해 8가지 · 다음 학습 순서 (Volume → OverlayFS → Container=Process → namespace → cgroup → containerd/runc → OCI) — [15장](docker-image-layers-and-copy-on-write.md#15-자주-헷갈리는-부분과-다음-학습-순서)
 - Docker Desktop(containerd 스냅샷터)과 Linux Engine(overlay2)의 경로·표시 차이 — [부록 A.1](docker-image-layers-and-copy-on-write.md#a1-docker-desktop과-linux-docker-engine의-차이)
 
 ## AWS 계정 · 조직 · 권한
-- Dev Weekly 한 장 요약 (계정·조직 축 vs 로그인·권한 축) — [요약과 구조도](aws-organizations-accounts-and-access.md#dev-weekly-한-장-요약--계정과-로그인-주체를-두-축으로-보기)
+- 상단 복습 — [핵심 요약](aws-organizations-accounts-and-access.md#핵심-요약) · [면접 질문 체크리스트](aws-organizations-accounts-and-access.md#면접-질문-체크리스트)
+- Dev Weekly 한 장 요약 (계정·조직 축 vs 로그인·권한 축) — [요약과 구조도](aws-organizations-accounts-and-access.md#계정과-로그인-주체를-두-축으로-보기)
 - AWS 조직의 전체 구조 (Organization · 조직의 Root · OU · 관리 계정 · 멤버 계정) — [2장](aws-organizations-accounts-and-access.md#2-aws-조직의-전체-구조--무엇이-무엇을-담고-있나)
 - **AWS 계정과 로그인하는 사람은 서로 다른 축이다** — [3장](aws-organizations-accounts-and-access.md#3-계정과-사람은-서로-다른-축이다)
 - 로그인 방법 네 가지 (루트 사용자 · IAM 사용자 · IAM 역할 · Identity Center와 Permission Set) — [4장](aws-organizations-accounts-and-access.md#4-로그인하는-방법은-네-가지뿐이다)
@@ -148,6 +157,7 @@
 - 폐쇄 직후(90일) vs 영구 폐쇄, 실제 정리 순서와 대기 기간 — [7.5](aws-organizations-accounts-and-access.md#75-실제-정리-순서와-대기-기간)
 
 ## Kotlin 언어
+- 상단 복습 — [핵심 요약](kotlin-callable-references.md#핵심-요약) · [면접 질문 체크리스트](kotlin-callable-references.md#면접-질문-체크리스트)
 - 함수 타입과 람다 — 함수도 값이다 — [1장](kotlin-callable-references.md#1-함수도-값이다--함수-타입과-람다)
 - **`::` 호출 가능 참조 — 호출하지 않고 이름으로 가리킨다** — [2장](kotlin-callable-references.md#2-는-이미-있는-함수를-이름으로-가리킨다)
 - `::`의 네 가지 모양 (최상위 · `타입::멤버` · `객체::멤버` · `::생성자`, 프로퍼티 참조) — [3장](kotlin-callable-references.md#3-의-네-가지-모양)
@@ -168,6 +178,7 @@
 - 사후 조사를 위해 미리 남겨야 하는 것 (GC 로그, 알람 조건, 오케스트레이터 이벤트 보관 기간) — [11장](jvm-memory-and-container-limits.md#11-사후에-알-수-있으려면-무엇을-남겨야-하나)
 
 ## DB 스키마 변경 · 온라인 DDL
+- 상단 복습 — [핵심 요약](mysql-online-ddl-and-schema-migration.md#핵심-요약) · [면접 질문 체크리스트](mysql-online-ddl-and-schema-migration.md#면접-질문-체크리스트)
 - DDL과 온라인 DDL이란 무엇인가 — [1장](mysql-online-ddl-and-schema-migration.md#1-ddl과-온라인-ddl--용어부터)
 - 테이블은 파일이고 행은 특정 물리 레이아웃으로 놓인다 — [2장](mysql-online-ddl-and-schema-migration.md#2-테이블은-파일이고-행은-그-안에-특정-모양으로-놓여-있다)
 - **테이블 rebuild가 물리적으로 하는 일과 그 비용** — [3장](mysql-online-ddl-and-schema-migration.md#3-rebuild란-무엇인가--새-파일을-만들어-전-행을-옮겨-적는-일)
@@ -191,14 +202,14 @@
 ---
 | 문서 | 다루는 카테고리 | 작성/갱신 |
 |---|---|---|
-| [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-13 |
-| [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-09-02 |
-| [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-09-07 |
-| [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-09-07 |
-| [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-09-11 |
-| [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-09-11 |
-| [tls-certificates-and-trust-stores.md](tls-certificates-and-trust-stores.md) | TLS · X.509 인증서 · 신뢰 저장소(PKI) · 런타임별 CA 관리 | 2026-09-16 |
-| [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-09-16 |
-| [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·함수 타입 프로퍼티·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-09-18 |
-| [jpa-hibernate-fundamentals-and-n-plus-one.md](jpa-hibernate-fundamentals-and-n-plus-one.md) | JPA 기초 — JPA/Hibernate/Spring Data JPA · JPQL · LAZY/EAGER · N+1 · Fetch Join/EntityGraph/Batch Fetching · 영속성 컨텍스트 · Dirty Checking · 면접 체크리스트 | 2026-09-20 |
-| [docker-image-layers-and-copy-on-write.md](docker-image-layers-and-copy-on-write.md) | Docker 이미지·컨테이너 기초 — 레이어 · 쓰기 레이어 · Copy-on-Write · OverlayFS · 데이터 수명(stop/start/rm) · 볼륨 입구 | 2026-09-20 |
+| [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-17 |
+| [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-10-17 |
+| [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-10-17 |
+| [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-10-17 |
+| [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-10-17 |
+| [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-10-17 |
+| [tls-certificates-and-trust-stores.md](tls-certificates-and-trust-stores.md) | TLS · X.509 인증서 · 신뢰 저장소(PKI) · 런타임별 CA 관리 | 2026-10-17 |
+| [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-10-17 |
+| [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·함수 타입 프로퍼티·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-10-17 |
+| [jpa-hibernate-fundamentals-and-n-plus-one.md](jpa-hibernate-fundamentals-and-n-plus-one.md) | JPA 기초 — JPA/Hibernate/Spring Data JPA · JPQL · LAZY/EAGER · N+1 · Fetch Join/EntityGraph/Batch Fetching · 영속성 컨텍스트 · Dirty Checking · 면접 체크리스트 | 2026-10-17 |
+| [docker-image-layers-and-copy-on-write.md](docker-image-layers-and-copy-on-write.md) | Docker 이미지·컨테이너 기초 — 레이어 · 쓰기 레이어 · Copy-on-Write · OverlayFS · 데이터 수명(stop/start/rm) · 볼륨 입구 | 2026-10-17 |

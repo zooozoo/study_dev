@@ -1,4 +1,6 @@
-# 케어톡 사내망 이슈로 배우는 웹 실시간 통신 · CORS · 인프라 개념 정리
+# 실시간 채팅 사내망 이슈로 배우는 웹 실시간 통신 · CORS · 인프라 개념 정리
+
+> 구성 갱신: 2026-10-17 — 상단 요약·면접 질문·본문 이동 링크 정비. 도메인·주소·설정 예시는 일반화했다.
 
 > M2T-222 / M2T-221 조사 과정에서 나온 개념들을 배경 지식 없이도 읽을 수 있게 정리한 학습 문서.
 > 계기: 회사 업무(M2T-222/221) 조사 — 구현 계획 문서는 회사 레포에 있음.
@@ -8,9 +10,29 @@
 
 ## 0. 이번 사건 한 문단 요약
 
-병원(고객사) 사내망 PC에서 파트너스 웹에 로그인은 되는데 **케어톡(실시간 채팅)만** "연결 끊김"이 뜬다. 개인 노트북에서는 정상이다. 원인 추정은 **사내망 프록시가 WebSocket 연결을 차단**하는 것. 해결책은 WebSocket이 막히면 평범한 HTTP 요청으로 우회하는 **SockJS 폴백**을 켜는 것인데, 그걸 켜자마자 이번엔 **CORS 에러**가 나면서 막혔다. 그래서 백엔드가 CORS 설정을 고쳐야 하는 상황이다.
+병원(고객사) 사내망 PC에서 업무용 웹에 로그인은 되는데 **실시간 채팅(실시간 채팅)만** "연결 끊김"이 뜬다. 개인 노트북에서는 정상이다. 원인 추정은 **사내망 프록시가 WebSocket 연결을 차단**하는 것. 해결책은 WebSocket이 막히면 평범한 HTTP 요청으로 우회하는 **SockJS 폴백**을 켜는 것인데, 그걸 켜자마자 이번엔 **CORS 에러**가 나면서 막혔다. 그래서 백엔드가 CORS 설정을 고쳐야 하는 상황이다.
 
 이 문장 안에 모르는 단어가 하나라도 있으면 이 문서가 도움이 된다. 아래 순서대로 읽으면 위 문단이 전부 이해된다.
+
+---
+
+## 핵심 요약
+
+1. HTTP(Hypertext Transfer Protocol — 웹 요청·응답 규약)는 연결을 유지해도 요청·응답 구조이며, 연결 유지 자체가 서버의 자유로운 메시지 전송을 뜻하지 않는다. → [본문](#2-먼저-http부터--왜-실시간-통신이-어려운가)
+2. WebSocket(한 연결로 양방향 메시지를 주고받는 통신 규약)은 연결을 연 뒤 계속 사용하며, 중간 장비의 유휴 연결 종료에도 대비해야 한다. → [본문](#3-websocket--한-번-연결해두고-계속-쓰는-방식)
+3. STOMP(Simple Text Oriented Messaging Protocol — 텍스트 기반 메시징 규약)는 WebSocket 통로 위에서 구독·전송 같은 대화 형식을 정한다. → [본문](#4-stomp--websocket-위에-얹는-대화-규칙)
+4. SockJS(실시간 통신 호환 라이브러리)는 WebSocket을 쓸 수 없을 때 HTTP 기반 전송으로 폴백(대체 방식으로 전환)한다. → [본문](#6-sockjs--websocket이-막히면-http로-흉내내기)
+5. CORS(Cross-Origin Resource Sharing — 교차 출처 리소스 공유)는 브라우저가 다른 출처의 응답을 읽는 조건을 정하며, 쿠키 등을 동반하는 요청에는 별도 허용 조건이 있다. → [본문](#7-cors--브라우저가-남의-집-응답을-못-읽게-막는-규칙)
+6. 여러 서버가 SockJS 세션을 처리할 때는 세션 고정(sticky session — 같은 세션을 같은 서버로 보내기)과 쿠키 전달을 함께 확인한다. → [본문](#9-로드밸런서와-세션-고정sticky-session)
+
+## 면접 질문 체크리스트
+
+각 질문을 소리 내어 설명해 보고, 막히면 연결된 본문에서 근거를 확인한다.
+
+- [ ] HTTP 연결 유지와 WebSocket은 무엇이 다른가? → [본문](#2-먼저-http부터--왜-실시간-통신이-어려운가)
+- [ ] STOMP와 WebSocket은 각각 어느 문제를 푸는가? → [본문](#4-stomp--websocket-위에-얹는-대화-규칙)
+- [ ] SockJS 폴백을 켠 뒤 CORS 오류가 드러날 수 있는 이유는? → [본문](#7-cors--브라우저가-남의-집-응답을-못-읽게-막는-규칙)
+- [ ] 여러 서버에서 SockJS 세션이 유지되려면 무엇을 확인해야 하는가? → [본문](#9-로드밸런서와-세션-고정sticky-session)
 
 ---
 
@@ -89,12 +111,12 @@
 
 ```http
 GET /ws HTTP/1.1
-Host: partners-api.mora-care.kr
+Host: partners-api.example.com
 Upgrade: websocket            ← "이 연결을 WebSocket으로 바꿔주세요"
 Connection: Upgrade
 Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
 Sec-WebSocket-Version: 13
-Origin: https://partners.mora-care.kr
+Origin: https://partners.example.com
 ```
 
 각 줄의 의미는 이렇다.
@@ -155,13 +177,13 @@ sequenceDiagram
 | `ws://` | 암호화 안 된 WebSocket | `http://` |
 | `wss://` | TLS로 암호화된 WebSocket | `https://` |
 
-우리 운영 주소가 `wss://partners-api.mora-care.kr/ws`인 이유다. 실무에선 `wss://`만 쓴다고 보면 된다.
+예시 서비스 주소가 `wss://partners-api.example.com/ws`인 이유다. 실무에선 `wss://`만 쓴다고 보면 된다.
 
 ### 3.4 하트비트(heartbeat)
 
 연결을 열어두기만 하면 끝이 아니다. 중간에 있는 장비들(공유기, 방화벽, 로드밸런서)은 **아무 데이터도 안 흐르는 연결을 "죽은 연결"로 보고 조용히 끊어버린다.** 그래서 주기적으로 의미 없는 신호를 주고받아 "나 살아있다"고 알린다. 이게 하트비트다.
 
-우리 설정은 [`AbstractCareTalkWebSocketConfig.kt`](caretalk/src/main/kotlin/kr/co/everex/care/caretalk/infrastructure/socket/AbstractCareTalkWebSocketConfig.kt) 32행에 있다.
+아래는 하트비트 주기를 설정하는 최소 예시다.
 
 ```kotlin
 .setHeartbeatValue(longArrayOf(10_000, 10_000))
@@ -184,13 +206,13 @@ WebSocket은 통로만 뚫어줄 뿐, **뭘 어떤 형식으로 주고받을지�
 
 STOMP의 주요 명령어:
 
-| 명령 | 뜻 | 우리 코드에서 |
+| 명령 | 뜻 | 애플리케이션 처리 예 |
 |---|---|---|
-| `CONNECT` | 접속 개시 (여기서 인증) | [`SharedJwtChannelInterceptor`](caretalk/src/main/kotlin/kr/co/everex/care/caretalk/infrastructure/socket/SharedJwtChannelInterceptor.kt)가 JWT 토큰 검사 |
-| `SUBSCRIBE` | 특정 채널 구독 ("이 방 메시지 받을게요") | 구독 권한 검사 (`CareTalkSubscriptionValidator`) |
+| `CONNECT` | 접속 개시 (여기서 인증) | 인증 인터셉터가 토큰 검사 |
+| `SUBSCRIBE` | 특정 채널 구독 ("이 방 메시지 받을게요") | 구독 권한 검사 |
 | `SEND` | 메시지 보내기 | |
 | `MESSAGE` | 서버 → 클라이언트 메시지 전달 | |
-| `ERROR` | 오류 통보 | [`CareTalkStompErrorHandler`](caretalk/src/main/kotlin/kr/co/everex/care/caretalk/infrastructure/socket/CareTalkStompErrorHandler.kt)가 `3002`(401) / `3001`(403) / `5000` 코드로 변환 |
+| `ERROR` | 오류 통보 | 오류 핸들러가 인증·권한·서버 오류를 프레임으로 변환 |
 
 ### 왜 이게 이번 진단에 중요했나
 
@@ -243,7 +265,7 @@ REST API는 정상이었다 = 계층 1, 2는 멀쩡하다 = **계층 3만 콕 �
 | 관찰 | 의미 |
 |---|---|
 | 로그인·다른 메뉴(REST)는 정상 | 도메인·TLS·방화벽 통과는 문제없음 |
-| 케어톡만 "연결 끊김" | WebSocket 핸드셰이크(Upgrade)만 막힘 |
+| 실시간 채팅만 "연결 끊김" | WebSocket 핸드셰이크(Upgrade)만 막힘 |
 | 개인 노트북은 정상 | 계정·권한·데이터 문제가 아님. **네트워크 경로 문제** |
 | 명확한 에러 코드가 없음 | STOMP 계층까지 못 감 (4장) |
 
@@ -295,12 +317,12 @@ flowchart TD
 
 ### 6.4 SockJS가 실제로 주고받는 것
 
-우리가 실제로 staging 서버에 찔러본 결과가 좋은 예시다.
+다음은 중립 도메인으로 바꾼 요청·응답 예시다.
 
 **1단계 — 능력 확인**
 
 ```bash
-curl https://staging-partners-api.mora-care.kr/ws/info
+curl https://staging-partners-api.example.com/ws/info
 ```
 ```json
 {"entropy":1442868485,"origins":["*:*"],"cookie_needed":true,"websocket":true}
@@ -316,7 +338,7 @@ curl https://staging-partners-api.mora-care.kr/ws/info
 **2단계 — 세션 열기**
 
 ```bash
-curl -X POST "https://staging-partners-api.mora-care.kr/ws/000/probe123/xhr"
+curl -X POST "https://staging-partners-api.example.com/ws/000/probe123/xhr"
 ```
 ```
 o
@@ -400,7 +422,7 @@ c[2010,"Another connection still open"]
 우리 코드에서는 한 줄이다.
 
 ```kotlin
-// AbstractCareTalkWebSocketConfig.kt
+// 실시간 통신 설정의 최소 예시
 registry.addEndpoint("/ws")
     .setAllowedOriginPatterns("*")
     .withSockJS()          // ← 이 한 줄이 폴백 기능 전체를 켠다
@@ -492,13 +514,13 @@ source.registerCorsConfiguration("/ws/**", webSocketCorsConfiguration())  // Soc
 
 | 주소 | 오리진 |
 |---|---|
-| `https://partners.mora-care.kr/caretalk/room/1` | `https://partners.mora-care.kr` |
-| `https://partners-api.mora-care.kr/api/v1/members` | `https://partners-api.mora-care.kr` |
+| `https://partners.example.com/chat/room/1` | `https://partners.example.com` |
+| `https://partners-api.example.com/api/v1/members` | `https://partners-api.example.com` |
 | `http://localhost:3000` | `http://localhost:3000` |
 | `http://localhost:8083` | `http://localhost:8083` |
 
 주의할 점 두 가지:
-- `partners`와 `partners-api`는 **서로 다른 오리진**이다. 같은 `mora-care.kr` 밑이어도 호스트가 다르면 남남이다.
+- `partners`와 `partners-api`는 **서로 다른 오리진**이다. 같은 `example.com` 밑이어도 호스트가 다르면 남남이다.
 - 포트만 달라도 다른 오리진이다. 그래서 로컬에서 프론트(3000)와 백엔드(8083)도 크로스 오리진이다.
 
 ### 7.2 동일 출처 정책(Same-Origin Policy)
@@ -519,7 +541,7 @@ source.registerCorsConfiguration("/ws/**", webSocketCorsConfiguration())  // Soc
 
 ### 7.3 그래서 CORS는 "차단 장치"가 아니라 "허용 장치"다
 
-그런데 현실에선 프론트(`partners.mora-care.kr`)와 API(`partners-api.mora-care.kr`)를 다른 도메인에 두는 게 보통이다. 이러면 동일 출처 정책 때문에 정상적인 호출도 막힌다.
+그런데 현실에선 프론트(`partners.example.com`)와 API(`partners-api.example.com`)를 다른 도메인에 두는 게 보통이다. 이러면 동일 출처 정책 때문에 정상적인 호출도 막힌다.
 
 그래서 만들어진 게 **CORS(Cross-Origin Resource Sharing, 교차 출처 리소스 공유)** 다.
 
@@ -550,7 +572,7 @@ source.registerCorsConfiguration("/ws/**", webSocketCorsConfiguration())  // Soc
 
 ```http
 OPTIONS /api/v1/members HTTP/1.1
-Origin: https://partners.mora-care.kr
+Origin: https://partners.example.com
 Access-Control-Request-Method: POST
 Access-Control-Request-Headers: authorization,content-type
 ```
@@ -607,7 +629,7 @@ if ((!opts || !opts.noCredentials) && AbstractXHRObject.supportsCORS) {
 그러면 위 규칙이 발동하는데, 우리 서버 응답은 이랬다.
 
 ```
-access-control-allow-origin: https://staging-partners.mora-care.kr   ✅ 정확한 오리진
+access-control-allow-origin: https://staging-partners.example.com   ✅ 정확한 오리진
 access-control-expose-headers: X-Trace-Id
 (access-control-allow-credentials 없음)                                ❌
 ```
@@ -619,7 +641,7 @@ The value of the 'Access-Control-Allow-Credentials' header in the response is ''
 which must be 'true' when the request's credentials mode is 'include'.
 ```
 
-원인은 [`SecurityConfig.kt`](partners-api/src/main/kotlin/kr/co/everex/care/partners/config/SecurityConfig.kt) 96행의 한 줄이다.
+다음처럼 credentials를 허용하지 않는 설정이면 ACAC 헤더가 나오지 않는다.
 
 ```kotlin
 configuration.allowCredentials = false   // ← 이것 때문에 ACAC 헤더가 안 나감
@@ -659,7 +681,7 @@ CORS가 막으려는 건 "악성 사이트가 **피해자의 로그인 상태를
 | 브라우저가 자동으로 붙여주는가 | ❌ JS가 명시적으로 넣어야 함 |
 | 공격자 사이트가 우리 토큰을 읽을 수 있나 | ❌ localStorage는 오리진별로 격리 |
 
-`evil.com`이 우리 API를 호출할 수는 있다. 그런데 토큰을 못 넣으니 **비로그인 요청**이 되고 401이 돌아온다. `allowCredentials = false` 라서 공격자가 `withCredentials=true`를 켜도 브라우저가 응답을 차단한다 — 이번에 케어톡을 막았던 그 메커니즘이 그대로 방어로 작동한다.
+`evil.com`이 우리 API를 호출할 수는 있다. 그런데 토큰을 못 넣으니 **비로그인 요청**이 되고 401이 돌아온다. `allowCredentials = false` 라서 공격자가 `withCredentials=true`를 켜도 브라우저가 응답을 차단한다 — 이번에 실시간 채팅을 막았던 그 메커니즘이 그대로 방어로 작동한다.
 
 #### 그럼에도 좁혀야 하는 이유
 
@@ -694,7 +716,7 @@ CWE 번호가 붙어 있다는 점도 실무적으로 중요하다. **취약점 
 
 ASVS가 V3.4.2(CORS allowlist)와 **V3.5.1(CSRF 방어)** 를 별도 항목으로 둔 것이 그 뜻이다. 다른 겹이 뚫렸을 때를 위해 이 겹도 제대로 세워두라는 것이다.
 
-> 실제로 좁힐 때는 **alias 확인이 선행**되어야 한다. `www.` 도메인, 구 도메인, 프리뷰(브랜치) 배포, `localhost` FE에서 staging API를 직접 호출하는 QA 방식이 있으면 전부 403이 된다. 이번 `/ws/**` 때 우려했던 것과 같은 리스크다. ([M2T-223](https://everexjj.atlassian.net/browse/M2T-223))
+> 실제로 좁힐 때는 **alias 확인이 선행**되어야 한다. `www.` 도메인, 구 도메인, 프리뷰(브랜치) 배포, `localhost` FE에서 staging API를 직접 호출하는 QA 방식이 있으면 전부 403이 된다. 이번 `/ws/**` 때 우려했던 것과 같은 리스크다.
 
 ---
 
@@ -761,7 +783,7 @@ public void validateAllowCredentials() {
 | `setAllowedOrigins("*")` | **기동 실패** — 프레임워크가 막아준다 |
 | `setAllowedOriginPatterns("*")` ← 우리 | **그냥 뜬다.** 모든 오리진에 credentials 허용 = 전형적인 크리티컬 CORS 취약점 |
 
-우리 코드에서 이게 가상의 시나리오가 아닌 이유가 있다. 이번 작업에서 **같은 파일에 `allowCredentials = true` 를 이미 넣었다**(`/ws/**`). 나중에 누군가 "케어톡처럼 하면 되겠네" 하고 그 패턴을 `/**` 에 복사하면, 아무 경고 없이 기동되고 아무도 모른다. 7.9에서 오리진을 좁혀야 한다고 한 이유 중 가장 구체적인 것이 이것이다.
+예를 들어 **같은 설정 파일의 `/ws/**` 경로에서 `allowCredentials = true`를 쓰고 있다**고 하자. 나중에 누군가 "실시간 채팅처럼 하면 되겠네" 하고 그 패턴을 `/**` 에 복사하면, 아무 경고 없이 기동되고 아무도 모른다. 7.9에서 오리진을 좁혀야 한다고 한 이유 중 가장 구체적인 것이 이것이다.
 
 ---
 
@@ -829,7 +851,7 @@ Set-Cookie: AWSALBCORS=abc123...; Path=/; SameSite=None; Secure
 
 ### 9.4 여기서 CORS와 다시 만난다
 
-프론트(`partners.mora-care.kr`)와 API(`partners-api.mora-care.kr`)는 **다른 오리진**이다(7.1). 브라우저는 크로스 오리진 요청에 **`withCredentials`가 켜져 있어야만 쿠키를 보낸다.**
+프론트(`partners.example.com`)와 API(`partners-api.example.com`)는 **다른 오리진**이다(7.1). 브라우저는 크로스 오리진 요청에 **`withCredentials`가 켜져 있어야만 쿠키를 보낸다.**
 
 ```
 여러 서버로 확장 → sticky session 필요 → 쿠키 필요
@@ -842,7 +864,7 @@ SockJS가 `cookie_needed: true`를 기본값으로 내려주는 것도 같은 �
 
 > **오리진(origin)과 사이트(site)는 다르다 — 자주 헷갈리는 지점.**
 > - **크로스 오리진**: 스킴·호스트·포트 중 하나라도 다르면 해당. `partners` ↔ `partners-api`는 크로스 오리진이다 → **`withCredentials` 필요**.
-> - **크로스 사이트**: 등록 가능 도메인(대략 `example.com` 수준)이 다르면 해당. 쿠키의 `SameSite` 속성이 이 기준을 쓴다. `partners.mora-care.kr` ↔ `partners-api.mora-care.kr`는 둘 다 `mora-care.kr`이라 **same-site**다 → 쿠키에 `SameSite=None`이 꼭 필요하지는 않다.
+> - **크로스 사이트**: 등록 가능 도메인(대략 `example.com` 수준)이 다르면 해당. 쿠키의 `SameSite` 속성이 이 기준을 쓴다. `partners.example.com` ↔ `partners-api.example.com`는 둘 다 `example.com`이라 **same-site**다 → 쿠키에 `SameSite=None`이 꼭 필요하지는 않다.
 >
 > 즉 우리 배치에서는 "`withCredentials`는 필요하지만 `SameSite=None`은 필수가 아니다"가 정답이다. 두 규칙을 하나로 뭉뚱그리면 엉뚱한 설정을 만지게 된다.
 
@@ -898,8 +920,8 @@ SockJS가 `cookie_needed: true`를 기본값으로 내려주는 것도 같은 �
 확인 방법:
 
 ```bash
-curl -sS -i -H "Origin: https://staging-partners.mora-care.kr" \
-  https://staging-partners-api.mora-care.kr/ws/info | grep -i "set-cookie\|access-control-allow-cred"
+curl -sS -i -H "Origin: https://staging-partners.example.com" \
+  https://staging-partners-api.example.com/ws/info | grep -i "set-cookie\|access-control-allow-cred"
 ```
 
 `Set-Cookie: AWSALB=...` 와 `access-control-allow-credentials: true` 가 함께 보이면 ③번까지 성립한 것이다. 브라우저에서는 개발자도구 Application → Cookies 에서 직접 볼 수 있다.
@@ -929,16 +951,13 @@ AWS API 모델 기준이다.
 | **3600초** | 실측 세션 수명(13초~5분, A.5)을 크게 상회하면서 재분산도 확보 — 권장 |
 | 86400초(기본) | 스케일아웃 후 하루 종일 쏠림 지속 |
 
-### 9.8 우리 상황 — 적용 완료 (2026-08-11)
+### 9.8 단일 서버와 다중 서버에서 검증할 것이 다르다
 
-**조사 시점(08-04)엔** dev·staging·prod 모두 대상 1개, stickiness 꺼짐(`lb_cookie`, 86400 기본값)이었다. **08-11 오후에 6개 타깃 그룹(app·partners × dev·staging·prod) 전부 켰다** — `enabled=true`, `lb_cookie`, `duration 3600`. 설정값의 단일 출처와 확인 명령은 Confluence [BE Deployment Architecture 3.1절](https://everexjj.atlassian.net/wiki/spaces/Engineering/pages/107315405) 이다([M2T-225](https://everexjj.atlassian.net/browse/M2T-225)).
+세션 고정을 켜도 대상 서버가 하나라면 어느 요청이든 같은 서버로 간다. 이때 쿠키가 붙는지만 확인해서는 다중 서버에서 같은 세션의 요청이 같은 서버로 가는지 검증할 수 없다.
 
-켰지만 아직 **효과는 검증되지 않았다**는 점을 알아둬야 한다.
-
-- **지금은 대상이 1개라 고정할 것이 없다.** 어디로 보내든 같은 서버다. 확인 가능한 건 `AWSALB` 쿠키가 응답에 붙는지까지다.
-- **효과가 실제로 발생하는 시점은 대상이 2개 이상일 때** — 스케일아웃, 또는 배포 중 새 버전과 옛 버전이 잠깐 공존하는 구간이다. 그때 이 설정이 없으면 코드는 멀쩡한데 **사내망 사용자(폴백 쓰는 사람)만** 다시 깨지는 고약한 증상이 난다. 그 전에 미리 켜둔 것이다.
-- **왜 미리 켜도 되나** — 9.7 표대로 대상 1개면 아무 효과가 없어 부작용도 없고, 무중단 변경이라 나중에 켜는 것과 비용이 같다. 잊어버릴 위험만 없앤 셈이다.
-- app-api는 실측상 네이티브 WebSocket만 쓰고 있어(prod 7일 `/ws/info` 0건) 지금은 이 설정이 실제로 쓰이지 않는다. 향후 Flutter Web 등에 대비해 partners와 동일하게 맞춰뒀다.
+- **서버가 하나일 때**: 세션 고정 쿠키와 브라우저의 쿠키 전달 여부를 확인한다.
+- **서버가 둘 이상일 때**: 폴백 세션의 반복 요청이 같은 서버로 가는지 확인한다. 스케일아웃이나 배포 중에도 점검한다.
+- **클라이언트별로**: 네이티브 WebSocket과 HTTP 폴백은 통신 방식이 다르므로 각각 확인한다.
 
 ---
 
@@ -982,7 +1001,7 @@ WAF는 패턴으로 판단하기 때문에 **정상 요청을 공격으로 오�
 
 ```mermaid
 flowchart TD
-    A["병원 사내망 프록시가<br/>WebSocket Upgrade 차단"] --> B["케어톡 연결 실패<br/>(REST는 정상)"]
+    A["병원 사내망 프록시가<br/>WebSocket Upgrade 차단"] --> B["실시간 채팅 연결 실패<br/>(REST는 정상)"]
     B --> C["해결책: SockJS 폴백 켜기<br/>FE가 wss:// → https:// 로 변경"]
     C --> D["SockJS 통신이 XHR이 됨<br/>(/ws/info 부터)"]
     D --> E["sockjs-client는 크로스 오리진이면<br/>항상 withCredentials=true"]
@@ -991,7 +1010,7 @@ flowchart TD
     G --> H["브라우저가 응답 차단<br/>= CORS 에러"]
     H --> I["BE 수정: /ws/** 경로에만<br/>credentials 허용 + 오리진 명시"]
     D -.->|"별개 주제"| J["다중 인스턴스면<br/>sticky session 필요"]
-    J -.->|"현재 1대라 효과는 미검증"| K["stickiness 선제 적용 완료<br/>(08-11, M2T-225)"]
+    J -.->|"서버 1대만으로는 검증 불가"| K["서버 여러 대에서<br/>세션 라우팅 확인"]
     C -.->|"부수 효과"| L["채팅 메시지가 HTTP 본문이 됨<br/>→ WAF 오탐 가능성"]
 ```
 
@@ -1013,7 +1032,7 @@ flowchart TD
 **SockJS 서버 정보 확인**
 
 ```bash
-curl -i -H "Origin: https://staging-partners.mora-care.kr" https://staging-partners-api.mora-care.kr/ws/info
+curl -i -H "Origin: https://staging-partners.example.com" https://staging-partners-api.example.com/ws/info
 ```
 
 `access-control-allow-origin`은 있는데 `access-control-allow-credentials`가 없는 걸 직접 볼 수 있다.
@@ -1021,7 +1040,7 @@ curl -i -H "Origin: https://staging-partners.mora-care.kr" https://staging-partn
 **Origin 헤더를 빼고 호출 (= 브라우저가 아닌 클라이언트 흉내)**
 
 ```bash
-curl -i https://staging-partners-api.mora-care.kr/ws/info
+curl -i https://staging-partners-api.example.com/ws/info
 ```
 
 `Access-Control-Allow-*` 헤더가 안 붙는다. 서버가 **`Origin` 헤더가 있을 때만** CORS 헤더를 만들기 때문이다(`DefaultCorsProcessor` 87행).
@@ -1031,7 +1050,7 @@ curl -i https://staging-partners-api.mora-care.kr/ws/info
 **SockJS 세션 열어보기 (`o` 프레임 확인)**
 
 ```bash
-curl -i -X POST "https://staging-partners-api.mora-care.kr/ws/000/mytest001/xhr"
+curl -i -X POST "https://staging-partners-api.example.com/ws/000/mytest001/xhr"
 ```
 
 **로컬에서 CORS 확인 (partners-api 실행 중일 때)**
@@ -1114,15 +1133,15 @@ curl -i -X OPTIONS -H "Origin: http://localhost:3000" -H "Access-Control-Request
 우리 서버에 요청을 두 번 보내면 실제로 이렇게 나온다.
 
 ```
-$ curl -sv --http1.1 https://partners-api.mora-care.kr/ws/info \
-                     https://partners-api.mora-care.kr/ws/info
+$ curl -sv --http1.1 https://partners-api.example.com/ws/info \
+                     https://partners-api.example.com/ws/info
 
-* Connected to partners-api.mora-care.kr (15.165.242.129) port 443
+* Connected to partners-api.example.com (203.0.113.10) port 443
 < Connection: keep-alive
-* Connection #0 to host partners-api.mora-care.kr left intact   ← 안 닫음
+* Connection #0 to host partners-api.example.com left intact   ← 안 닫음
 * Re-using existing connection with host ...                    ← 두 번째 요청이 재사용
 < Connection: keep-alive
-* Connection #0 to host partners-api.mora-care.kr left intact
+* Connection #0 to host partners-api.example.com left intact
 ```
 
 | 버전 | 연결 동작 |
@@ -1167,7 +1186,7 @@ HTTP 클라이언트 라이브러리들이 **멱등한 요청(GET 등)에 한해
 | 열어두는 목적 | 다음 **요청**을 빨리 보내려고 | 양방향 **대화**를 하려고 |
 | 유휴 상태 | 그냥 닫음 | **하트비트로 살려둠**(3.4) |
 
-마지막 줄이 중요하다. HTTP는 유휴 연결을 닫아도 아쉽지 않다 — 필요하면 다시 열면 된다. 반면 WebSocket은 끊기면 **대화 자체가 끊기고 재인증·재구독이 필요**하다. 우리 케어톡 하트비트가 10초/10초인 것은 위 표의 **ALB 유휴 타임아웃 60초**를 넘기지 않기 위해서다. 채팅은 몇 분씩 조용할 수 있으니, 하트비트가 없으면 60초마다 끊기고 재연결하는 루프에 빠진다.
+마지막 줄이 중요하다. HTTP는 유휴 연결을 닫아도 아쉽지 않다 — 필요하면 다시 열면 된다. 반면 WebSocket은 끊기면 **대화 자체가 끊기고 재인증·재구독이 필요**하다. 예시에서 하트비트를 10초/10초로 둔 것은 위 표의 **ALB 유휴 타임아웃 60초**를 넘기지 않기 위해서다. 채팅은 몇 분씩 조용할 수 있으니, 하트비트가 없으면 60초마다 끊기고 재연결하는 루프에 빠진다.
 
 > 하트비트를 "죽은 연결 감지용"으로만 알기 쉬운데, **중간 장비의 유휴 타임아웃을 넘기기 위한 장치**이기도 하다. 실무에서는 이쪽으로 더 자주 부딪힌다.
 
@@ -1182,8 +1201,8 @@ A.1을 읽고 나면 자연스럽게 두 가지가 걸린다.
 
 ```
 소켓 하나 열었다 (TCP 3-way + TLS 핸드셰이크 1회)
-  내 쪽  : 172.16.73.184:59171
-  서버 쪽: 43.201.134.194:443
+  내 쪽  : 192.0.2.10:59171
+  서버 쪽: 203.0.113.20:443
 
 [요청 1]  같은 소켓 59171 번 포트로 전송
   Content-Length: 78   본문: {"entropy":-954241140,...}   남은 바이트: 0
@@ -1219,7 +1238,7 @@ A.1을 읽고 나면 자연스럽게 두 가지가 걸린다.
 (출발지 IP, 출발지 포트, 목적지 IP, 목적지 포트)
 ```
 
-목적지가 전부 `43.201.134.194:443`으로 같아도, 클라이언트마다 **출발지 IP·포트가 다르므로** 다른 연결로 구분된다. 커널이 도착한 패킷의 4-tuple을 보고 어느 소켓에 넣을지 결정한다.
+목적지가 전부 `203.0.113.20:443`으로 같아도, 클라이언트마다 **출발지 IP·포트가 다르므로** 다른 연결로 구분된다. 커널이 도착한 패킷의 4-tuple을 보고 어느 소켓에 넣을지 결정한다.
 
 위 스크립트를 두 번 돌리면 내 쪽 포트가 바뀌는 것으로 확인된다(59149 → 59171). 새 연결마다 OS가 남는 포트(ephemeral port)를 하나씩 배정하기 때문이다.
 
@@ -1279,7 +1298,7 @@ fd=7 --------------------> 연결 소켓 B: 내 포트 18080, 상대 포트 5935
 | `maxThreads` | 요청을 **처리하는 스레드** 수 | 200 |
 | `acceptCount` | `maxConnections` 초과 시 OS 대기열 길이 | 100 |
 
-`maxConnections`(8192)와 `maxThreads`(200)가 다른 값인 게 핵심이다. NIO 방식에서는 **연결을 붙잡고 있는 것과 그 연결의 요청을 처리하는 것이 분리**돼 있어서, 8192개 연결이 열려 있어도 그 순간 실제로 일하는 스레드는 최대 200개다. 대부분의 연결은 그냥 조용히 열려만 있기 때문에 가능한 구조다 — 케어톡 WebSocket 연결 수천 개가 스레드 수천 개를 의미하지 않는 이유다.
+`maxConnections`(8192)와 `maxThreads`(200)가 다른 값인 게 핵심이다. NIO 방식에서는 **연결을 붙잡고 있는 것과 그 연결의 요청을 처리하는 것이 분리**돼 있어서, 8192개 연결이 열려 있어도 그 순간 실제로 일하는 스레드는 최대 200개다. 대부분의 연결은 그냥 조용히 열려만 있기 때문에 가능한 구조다 — 실시간 채팅 WebSocket 연결 수천 개가 스레드 수천 개를 의미하지 않는 이유다.
 
 #### 응답은 누가 어디로 보내나 — HTTP는 관여하지 않는다
 
@@ -1347,7 +1366,7 @@ GET /ws/info HTTP/1.1\r\nHost: ...\r\n\r\nGET /ws/info HTTP/1.1\r\nHost: ...\r\n
 ```python
 import socket, ssl
 
-HOST = "partners-api.mora-care.kr"
+HOST = "partners-api.example.com"
 ctx = ssl.create_default_context()
 ctx.set_alpn_protocols(["http/1.1"])          # HTTP/2 말고 1.1로 강제
 
