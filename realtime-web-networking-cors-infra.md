@@ -1176,6 +1176,8 @@ curl -i -X OPTIONS -H "Origin: http://localhost:3000" -H "Access-Control-Request
 
 ### A.1 "HTTP는 응답이 끝나면 연결을 닫는다"
 
+> 버전별 특징과 원리를 순서대로 공부하려면 [HTTP 버전의 발전 과정](http-versions-and-evolution.md)을 읽는다. 연결 재사용, 파이프라이닝, 다중화, TCP와 QUIC의 대기 차이를 같은 요청 예제로 비교한다.
+
 2.1절 그림의 "한 턴 끝"은 **대화가 끝났다**는 뜻이지 **TCP 연결이 닫힌다**는 뜻이 아니다. HTTP/1.1부터는 **연결 유지(keep-alive)가 기본**이다. 매 요청마다 TCP 3-way 핸드셰이크와 TLS 핸드셰이크를 반복하면 너무 느리기 때문이다.
 
 ```
@@ -1201,9 +1203,9 @@ $ curl -sv --http1.1 https://partners-api.example.com/ws/info \
 
 | 버전 | 연결 동작 |
 |---|---|
-| HTTP/1.0 | 요청-응답 1회마다 연결 종료 (오해의 출처) |
-| **HTTP/1.1** | **기본 keep-alive.** `Connection: close`를 명시해야 닫음 |
-| HTTP/2 | TCP 연결 **하나**에 여러 요청을 동시 다중화. 우리 서버가 실제로 쓰는 방식 (위 실험은 비교를 위해 `--http1.1`로 강제) |
+| HTTP/1.0 | 기본적으로 요청-응답 후 연결 종료. keep-alive 확장도 존재 |
+| **HTTP/1.1** | **기본 keep-alive.** `Connection: close`로 종료를 알릴 수 있으며 시간 제한·오류 등으로도 닫힐 수 있음 |
+| HTTP/2 | TCP 연결 **하나**에 여러 요청을 다중화 (위 예시는 비교를 위해 `--http1.1`로 강제) |
 | HTTP/3 | TCP가 아니라 QUIC(UDP) 기반 |
 
 #### 그 연결은 누가 언제까지 들고 있나

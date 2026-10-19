@@ -5,6 +5,8 @@
 > 규모 확장 규칙: 카테고리는 처음엔 한 파일의 **섹션**으로 시작 → 내용이 쌓이면 **독립 파일**로 분리 → 파일이 여럿 되면 **폴더**로 승격. 분리·승격 시 이 인덱스의 링크만 갱신하면 된다.
 
 ## 네트워크 · 실시간 통신
+- HTTP 버전별 특징과 발전 원리 — [공통 기초](http-versions-and-evolution.md#1-http-메시지와-연결은-서로-다른-것이다) · [HTTP/1.0](http-versions-and-evolution.md#2-http10은-메시지를-표현하지만-연결을-반복해서-만든다) · [HTTP/1.1](http-versions-and-evolution.md#3-http11은-연결을-재사용하지만-응답-순서에-묶인다) · [HTTP/2](http-versions-and-evolution.md#4-http2는-응답을-쪼개-섞지만-tcp의-순서-보장은-공유한다) · [HTTP/3](http-versions-and-evolution.md#5-http3는-quic으로-스트림별-전달을-분리한다)
+- HTTP 버전 비교와 관찰 — [같은 페이지 비교](http-versions-and-evolution.md#6-같은-페이지를-불러오며-네-버전을-비교한다) · [브라우저와 curl 실습](http-versions-and-evolution.md#7-도구로-협상된-버전과-연결-재사용을-관찰한다) · [헤더 압축](http-versions-and-evolution.md#부록-a-헤더-압축은-반복되는-정보를-참조로-바꾼다)
 - 상단 복습 — [핵심 요약](realtime-web-networking-cors-infra.md#핵심-요약) · [면접 질문 체크리스트](realtime-web-networking-cors-infra.md#면접-질문-체크리스트)
 - HTTP의 한계와 keep-alive — [2장](realtime-web-networking-cors-infra.md#2-먼저-http부터--왜-실시간-통신이-어려운가) · [부록 A.1~A.2](realtime-web-networking-cors-infra.md#a1-http는-응답이-끝나면-연결을-닫는다)
 - WebSocket (Upgrade 핸드셰이크, ws/wss, 하트비트) — [3장](realtime-web-networking-cors-infra.md#3-websocket--한-번-연결해두고-계속-쓰는-방식)
@@ -204,6 +206,7 @@
 ---
 | 문서 | 다루는 카테고리 | 작성/갱신 |
 |---|---|---|
+| [http-versions-and-evolution.md](http-versions-and-evolution.md) | HTTP/1.0·1.1·2·3 · 연결 재사용 · 다중화 · TCP/QUIC · 헤더 압축 | 2026-10-20 |
 | [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-20 |
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-10-17 |
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-10-17 |
