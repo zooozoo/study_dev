@@ -9,7 +9,9 @@
 - HTTP의 한계와 keep-alive — [2장](realtime-web-networking-cors-infra.md#2-먼저-http부터--왜-실시간-통신이-어려운가) · [부록 A.1~A.2](realtime-web-networking-cors-infra.md#a1-http는-응답이-끝나면-연결을-닫는다)
 - WebSocket (Upgrade 핸드셰이크, ws/wss, 하트비트) — [3장](realtime-web-networking-cors-infra.md#3-websocket--한-번-연결해두고-계속-쓰는-방식)
 - STOMP (WebSocket 위의 메시징 규약) — [4장](realtime-web-networking-cors-infra.md#4-stomp--websocket-위에-얹는-대화-규칙)
-- SockJS 폴백 사다리 (XHR streaming/polling, 폴백의 대가) — [6장](realtime-web-networking-cors-infra.md#6-sockjs--websocket이-막히면-http로-흉내내기)
+- SockJS 폴백 사다리 (XHR streaming/long polling, 폴백의 대가) — [6장](realtime-web-networking-cors-infra.md#6-sockjs--websocket이-막히면-http로-흉내내기)
+
+- SockJS는 수신 방식 하나 + 송신 POST로 양방향 통신을 흉내낸다 (스트리밍·롱 폴링 비교 그림) — [6.3.1절](realtime-web-networking-cors-infra.md#631-수신-방식-하나와-송신용-post를-조합한다)
 
 ## 암호학 기초
 - 상단 복습 — [핵심 요약](cryptography-fundamentals-for-backend.md#핵심-요약) · [면접 질문 체크리스트](cryptography-fundamentals-for-backend.md#면접-질문-체크리스트)
@@ -202,7 +204,7 @@
 ---
 | 문서 | 다루는 카테고리 | 작성/갱신 |
 |---|---|---|
-| [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-17 |
+| [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-20 |
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-10-17 |
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-10-17 |
 | [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-10-17 |
