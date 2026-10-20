@@ -12,7 +12,7 @@
 - HTTP 지연과 전송량 제어 — [RTT 비용 예시](http-versions-and-evolution.md#1-http-메시지와-연결은-서로-다른-것이다) · [스트림 번호의 관리](http-versions-and-evolution.md#41-프레임에-스트림-번호를-붙이면-응답을-섞을-수-있다) · [흐름·혼잡 제어](http-versions-and-evolution.md#42-tcp가-빠진-바이트를-기다리면-스트림도-함께-기다린다)
 - QUIC의 재접속과 이동, 압축 정보의 대기 — [0-RTT와 연결 ID](http-versions-and-evolution.md#52-연결-준비와-네트워크-이동도-함께-다룬다) · [HPACK·QPACK 테이블 예시](http-versions-and-evolution.md#부록-a-헤더-압축은-반복되는-정보를-참조로-바꾼다)
 - HTTPS 버전 선택 — [ALPN과 HTTP/3 발견](http-versions-and-evolution.md#73-https의-버전은-연결을-준비하면서-선택한다)
-- HTTP 버전 비교와 관찰 — [같은 페이지 비교](http-versions-and-evolution.md#6-같은-페이지를-불러오며-네-버전을-비교한다) · [브라우저와 curl 실습](http-versions-and-evolution.md#7-도구로-협상된-버전과-연결-재사용을-관찰한다) · [헤더 압축](http-versions-and-evolution.md#부록-a-헤더-압축은-반복되는-정보를-참조로-바꾼다)
+- HTTP 버전 비교와 관찰 — [같은 페이지의 연결 재사용·추가 연결·준비 절차 비교](http-versions-and-evolution.md#6-같은-페이지를-불러오며-네-버전을-비교한다) · [브라우저와 curl 실습](http-versions-and-evolution.md#7-도구로-협상된-버전과-연결-재사용을-관찰한다) · [헤더 압축](http-versions-and-evolution.md#부록-a-헤더-압축은-반복되는-정보를-참조로-바꾼다)
 - 상단 복습 — [핵심 요약](realtime-web-networking-cors-infra.md#핵심-요약) · [면접 질문 체크리스트](realtime-web-networking-cors-infra.md#면접-질문-체크리스트)
 - HTTP의 한계와 keep-alive — [2장](realtime-web-networking-cors-infra.md#2-먼저-http부터--왜-실시간-통신이-어려운가) · [부록 A.1~A.2](realtime-web-networking-cors-infra.md#a1-http는-응답이-끝나면-연결을-닫는다)
 - WebSocket (Upgrade 핸드셰이크, ws/wss, 하트비트) — [3장](realtime-web-networking-cors-infra.md#3-websocket--한-번-연결해두고-계속-쓰는-방식)
