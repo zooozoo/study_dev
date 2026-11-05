@@ -84,11 +84,26 @@
 - 경계를 바꾸면 딸려오는 것 (readOnly 리플리카 라우팅, 커밋 후 콜백 시점) — [8장](spring-transaction-boundaries-and-batch.md#8-경계를-바꾸면-딸려오는-것들)
 - self-invocation 함정, `private` 메서드에 안 먹는 이유 — [부록 A.3](spring-transaction-boundaries-and-batch.md#a3-self-invocation--같은-클래스-안에서-부르면-왜-안-먹나)
 
+## Spring Boot 기동 · 이벤트
+
+- 상단 복습 — [핵심 요약](spring-boot-startup-lifecycle-and-events.md#핵심-요약) · [면접 질문 체크리스트](spring-boot-startup-lifecycle-and-events.md#면접-질문-체크리스트)
+- 직접 부르기 vs 불러 달라고 등록하기 (제어의 역전) — [1장](spring-boot-startup-lifecycle-and-events.md#1-직접-부르기와-불러-달라고-등록하기)
+- 빈·애플리케이션 컨텍스트·컴포넌트 스캔·생성자 주입 — [2장](spring-boot-startup-lifecycle-and-events.md#2-빈과-컨테이너--spring이-객체를-대신-만든다)
+- **`SpringApplication.run()` 순서와 기동 이벤트 표 (Started는 러너 전, Ready는 러너 후)** — [3장](spring-boot-startup-lifecycle-and-events.md#3-springapplicationrun은-어떤-순서로-진행되나)
+- `@EventListener`의 동작, 컨텍스트 전 이벤트를 빈이 못 받는 이유 — [4장](spring-boot-startup-lifecycle-and-events.md#4-이벤트와-리스너--방송과-구독)
+- **리스너는 발행 스레드에서 동기로 돈다 — 예외·지연이 발행자에게 간다** — [5장](spring-boot-startup-lifecycle-and-events.md#5-리스너는-발행한-스레드에서-동기로-돈다)
+- 앱 종료 — 데몬 스레드, shutdown hook, `ContextClosedEvent`, SIGTERM vs SIGKILL — [7장](spring-boot-startup-lifecycle-and-events.md#7-앱은-언제-어떻게-끝나나)
+- `ScheduledExecutorService` — fixedRate vs fixedDelay, 예외 한 번에 반복이 멈춘다 — [8장](spring-boot-startup-lifecycle-and-events.md#8-10초마다--scheduledexecutorservice)
+- 두 스레드가 공유 상태를 만질 때 — 잠금 밖에서 기다리기 — [9장](spring-boot-startup-lifecycle-and-events.md#9-두-스레드가-같은-값을-만질-때)
+- 기동부터 종료까지 타임라인 한 장, 다른 방법과 비교 — [10장](spring-boot-startup-lifecycle-and-events.md#10-전체-타임라인-한-장) · [11장](spring-boot-startup-lifecycle-and-events.md#11-다른-방법과-비교)
+- 최소 재현 예제와 실험 4가지 — [부록 A.1](spring-boot-startup-lifecycle-and-events.md#a1-최소-재현-예제)
+
 ## Spring Batch
 
 - 청크 스텝 vs 태스클릿 스텝 — [6.1](spring-transaction-boundaries-and-batch.md#61-먼저-스텝에는-두-종류가-있다)
 - `ResourcelessTransactionManager` (소스로 보는 실체, 버전별 패키지 이동) — [5장](spring-transaction-boundaries-and-batch.md#5-resourcelesstransactionmanager--아무것도-잡지-않는-트랜잭션-매니저)
 - 배치 트랜잭션 매니저 선택 기준, 메타데이터 원자성이라는 대가 — [6장](spring-transaction-boundaries-and-batch.md#6-배치에서-어떤-트랜잭션-매니저를-고를-것인가)
+- 잡은 누가 실행하나 — `JobLauncherApplicationRunner`, `JobExecutionEvent`, 기본 동기 실행 — [6장](spring-boot-startup-lifecycle-and-events.md#6-배치-잡은-누가-실행하나--joblauncherapplicationrunner)
 - 트랜잭션 경계 변경을 테스트로 잡는 법 (판별력 있는 통합 테스트, 실 DB A/B) — [10장](spring-transaction-boundaries-and-batch.md#10-트랜잭션-경계를-테스트로-잡는-법)
 
 ## JPA · 영속성 컨텍스트 · N+1
@@ -134,6 +149,13 @@
 - JVM 옵션 우선순위 함정 (`JAVA_TOOL_OPTIONS` vs 커맨드라인) — [9장](jvm-memory-and-container-limits.md#9-같은-옵션을-두-군데서-주면-어느-쪽이-이기나)
 - 컨테이너 크기가 GC 선택을 바꾼다 — [10장](jvm-memory-and-container-limits.md#10-컨테이너에서는-gc-종류도-달라진다)
 - cgroup 기초 — [부록 A.1](jvm-memory-and-container-limits.md#a1-cgroup--리눅스가-자원-한도를-거는-방법)
+- 상단 복습(메모리 지표) — [핵심 요약](jvm-and-container-memory-metrics.md#핵심-요약) · [면접 질문 체크리스트](jvm-and-container-memory-metrics.md#면접-질문-체크리스트)
+- **메모리 지표 읽는 법 — 힙은 GC 직후 값, 컨테이너는 캐시를 뺀 값** — [핵심 요약](jvm-and-container-memory-metrics.md#핵심-요약)
+- 힙 순간 사용량은 톱니다, `getCollectionUsage()`로 GC 직후 힙 읽기 — [2장](jvm-and-container-memory-metrics.md#2-힙-순간-사용량은-톱니다) · [3장](jvm-and-container-memory-metrics.md#3-gc-직후-힙--청소하고도-남은-양)
+- 힙 비율의 분모 (`getMax()`가 -1일 때) — [4장](jvm-and-container-memory-metrics.md#4-분모는-힙-최대치다)
+- cgroup 메모리에는 페이지 캐시도 들어 있다, 회수 후 OOM — [5장](jvm-and-container-memory-metrics.md#5-컨테이너-메모리에는-페이지-캐시도-들어-있다)
+- **`usage - cache`(v1) / `usage - inactive_file`(v2) — docker stats·ECS agent 계산식** — [6장](jvm-and-container-memory-metrics.md#6-그래서-회수-가능한-캐시를-빼고-본다)
+- ECS 태스크 메타데이터 v4 (`/task`의 `Limits`, `/task/stats`) — [7장](jvm-and-container-memory-metrics.md#7-값은-어디서-읽나--ecs-태스크-메타데이터-v4)
 - Metaspace 두 옵션의 차이 — [부록 A.3](jvm-memory-and-container-limits.md#a3-metaspace의-두-옵션은-이름만-비슷하고-역할이-다르다)
 
 ## Docker · 컨테이너 기초
@@ -200,6 +222,11 @@
 ## 운영 관측성
 
 - 사후 조사를 위해 미리 남겨야 하는 것 (GC 로그, 알람 조건, 오케스트레이터 이벤트 보관 기간) — [11장](jvm-memory-and-container-limits.md#11-사후에-알-수-있으려면-무엇을-남겨야-하나)
+- 비율을 만들 때의 함정 (NaN·Infinity, MiB/MB, 값 없음을 0으로 쓰기) — [8장](jvm-and-container-memory-metrics.md#8-비율을-만들-때의-함정)
+- 요약 로그만으로는 강제 종료된 실행이 안 남는다 — 주기 표본 — [9장](jvm-and-container-memory-metrics.md#9-왜-요약만이-아니라-주기-표본도-남기나)
+- **구조화 로그 → 지표 필터 → 알람, 필드 이름은 계약** — [10장](jvm-and-container-memory-metrics.md#10-로그를-지표로--구조화-로그와-지표-필터)
+- 임계값 정하는 원칙 — [11장](jvm-and-container-memory-metrics.md#11-임계값은-어떻게-정하나)
+- 측정이 본 작업을 막지 않게 — JDK `HttpClient` timeout은 응답 헤더까지만 잰다 — [12장](jvm-and-container-memory-metrics.md#12-측정이-잡을-막으면-안-된다--http-timeout의-함정)
 
 ## DB 스키마 변경 · 온라인 DDL
 
@@ -232,7 +259,7 @@
 | [http-versions-and-evolution.md](http-versions-and-evolution.md) | HTTP/1.0·1.1·2·3 · 메시지 경계·헤더 · 파이프라이닝·서버 구현 · 다중화·전송량 제어 · TCP/QUIC·0-RTT·연결 이동 · 버전 협상·헤더 압축 | 2026-10-20 |
 | [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-20 |
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-10-17 |
-| [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-10-17 |
+| [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-11-05 |
 | [jpa-lazy-loading-and-persistence-context.md](jpa-lazy-loading-and-persistence-context.md) | JPA 영속성 컨텍스트 · 지연 로딩 · ORM 성능 | 2026-10-17 |
 | [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-10-17 |
 | [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-10-17 |
@@ -241,3 +268,5 @@
 | [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·함수 타입 프로퍼티·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-10-17 |
 | [jpa-hibernate-fundamentals-and-n-plus-one.md](jpa-hibernate-fundamentals-and-n-plus-one.md) | JPA 기초 — JPA/Hibernate/Spring Data JPA · JPQL · LAZY/EAGER · N+1 · Fetch Join/EntityGraph/Batch Fetching · 영속성 컨텍스트 · Dirty Checking · 면접 체크리스트 | 2026-10-17 |
 | [docker-image-layers-and-copy-on-write.md](docker-image-layers-and-copy-on-write.md) | Docker 이미지·컨테이너 기초 — 레이어 · 쓰기 레이어 · Copy-on-Write · OverlayFS · 데이터 수명(stop/start/rm) · 볼륨 입구 | 2026-10-17 |
+| [jvm-and-container-memory-metrics.md](jvm-and-container-memory-metrics.md) | JVM 메모리 · 컨테이너 — 힙 GC 직후 지표·cgroup 캐시 제외 계산·ECS 메타데이터 · 운영 관측성(로그 기반 지표·알람) | 2026-11-05 |
+| [spring-boot-startup-lifecycle-and-events.md](spring-boot-startup-lifecycle-and-events.md) | Spring Boot 기동 순서·이벤트 리스너·종료 · 배치 잡 실행기 · 스케줄 실행기·데몬 스레드 | 2026-11-05 |
