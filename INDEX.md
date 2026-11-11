@@ -200,6 +200,19 @@
 - 루트 이메일 재사용 제한과 폐쇄 전 이메일 변경 — [7.4](aws-organizations-accounts-and-access.md#74-루트-이메일은-폐쇄-전에-바꿔야-한다)
 - 폐쇄 직후(90일) vs 영구 폐쇄, 실제 정리 순서와 대기 기간 — [7.5](aws-organizations-accounts-and-access.md#75-실제-정리-순서와-대기-기간)
 
+## Java 언어
+
+- 상단 복습 — [핵심 요약](java-records.md#핵심-요약) · [면접 질문 체크리스트](java-records.md#면접-질문-체크리스트)
+- **record 헤더의 컴포넌트가 곧 `private final` 필드다** — [1장](java-records.md#1-괄호-안의-목록이-곧-필드-목록이다)
+- 정식 생성자 — `new`에 넘긴 값은 순서대로 칸에 들어간다 — [2장](java-records.md#2-new에-넘긴-값은-순서대로-칸에-들어간다)
+- 접근자 `x()` (getX 아님) — [3장](java-records.md#3-꺼낼-때는-getx가-아니라-x다)
+- 값 기준 `equals`·`hashCode`, `toString`과 민감값 노출 — [4장](java-records.md#4-값이-같으면-같은-객체로-본다--equals와-tostring)
+- compact 생성자로 검증·정규화, 추가 생성자 위임 — [5장](java-records.md#5-검증은-compact-생성자에-쓴다)
+- 제약(인스턴스 필드·재대입·상속 불가)과 얕은 불변 — [6장](java-records.md#6-record가-못-하는-것--제약과-얕은-불변)
+- 중첩 record는 static, 바깥 클래스의 private 필드 접근 — [7장](java-records.md#7-클래스-안에-둔-record--중첩-record와-private-접근)
+- 언제 쓰나(DTO·Map 키·투영 vs JPA 엔티티), record 패턴 — [8장](java-records.md#8-언제-record를-쓰나)
+- JDK 21 실험 코드와 출력 — [부록 A](java-records.md#부록-a-실험-코드와-실제-출력)
+
 ## Kotlin 언어
 
 - 상단 복습 — [핵심 요약](kotlin-callable-references.md#핵심-요약) · [면접 질문 체크리스트](kotlin-callable-references.md#면접-질문-체크리스트)
@@ -270,3 +283,4 @@
 | [docker-image-layers-and-copy-on-write.md](docker-image-layers-and-copy-on-write.md) | Docker 이미지·컨테이너 기초 — 레이어 · 쓰기 레이어 · Copy-on-Write · OverlayFS · 데이터 수명(stop/start/rm) · 볼륨 입구 | 2026-10-17 |
 | [jvm-and-container-memory-metrics.md](jvm-and-container-memory-metrics.md) | JVM 메모리 · 컨테이너 — 힙 GC 직후 지표·cgroup 캐시 제외 계산·ECS 메타데이터 · 운영 관측성(로그 기반 지표·알람) | 2026-11-05 |
 | [spring-boot-startup-lifecycle-and-events.md](spring-boot-startup-lifecycle-and-events.md) | Spring Boot 기동 순서·이벤트 리스너·종료 · 배치 잡 실행기 · 스케줄 실행기·데몬 스레드 | 2026-11-05 |
+| [java-records.md](java-records.md) | Java 언어 — record 문법·컴포넌트·정식/compact 생성자·접근자·equals/toString·얕은 불변·중첩 record·record 패턴 | 2026-11-11 |
