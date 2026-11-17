@@ -83,6 +83,13 @@
 - 트랜잭션 매니저를 빈으로 올리면 조용히 깨지는 함정 — [7장](spring-transaction-boundaries-and-batch.md#7-조용히-깨지는-함정--트랜잭션-매니저를-빈으로-올리지-말-것)
 - 경계를 바꾸면 딸려오는 것 (readOnly 리플리카 라우팅, 커밋 후 콜백 시점) — [8장](spring-transaction-boundaries-and-batch.md#8-경계를-바꾸면-딸려오는-것들)
 - self-invocation 함정, `private` 메서드에 안 먹는 이유 — [부록 A.3](spring-transaction-boundaries-and-batch.md#a3-self-invocation--같은-클래스-안에서-부르면-왜-안-먹나)
+- `NOT_SUPPORTED` 전파와 조회 트랜잭션 경계 — [핵심 요약](spring-not-supported-and-read-transaction-boundaries.md#핵심-요약) · [면접 질문 체크리스트](spring-not-supported-and-read-transaction-boundaries.md#면접-질문-체크리스트)
+- 트랜잭션 없는 구간에서도 EntityManager가 열리는 이유 — [2장](spring-not-supported-and-read-transaction-boundaries.md#2-not_supported는-트랜잭션-없이-실행하라는-전파-방식이다) · [3장](spring-not-supported-and-read-transaction-boundaries.md#3-트랜잭션이-없어도-entitymanager는-메서드-범위로-열린다)
+- 커넥션을 잡고 놓는 시점 (지연 획득, Hibernate HOLD 모드) — [4장](spring-not-supported-and-read-transaction-boundaries.md#4-커넥션은-첫-쿼리에서-잡히고-entitymanager가-닫힐-때-풀린다)
+- 커밋과 분산락 해제 순서, 바깥을 트랜잭션으로 묶으면 안 되는 이유 — [6장](spring-not-supported-and-read-transaction-boundaries.md#6-바깥을-트랜잭션으로-묶으면-안-되는-이유--커밋과-락-해제-순서)
+- 조회마다 짧은 트랜잭션으로 커넥션을 바로 반납하기 — [7장](spring-not-supported-and-read-transaction-boundaries.md#7-해법--조회마다-짧은-트랜잭션을-씌운다)
+- readOnly를 붙일지 정하는 기준 (복제 지연, 쓰기 대상을 정하는 조회) — [8장](spring-not-supported-and-read-transaction-boundaries.md#8-readonly를-붙일지는-어느-db를-읽어야-하는지로-정한다)
+- 근거가 되는 Spring 소스 — [부록 A](spring-not-supported-and-read-transaction-boundaries.md#부록-a-spring-소스로-보는-근거)
 
 ## Spring Boot 기동 · 이벤트
 
@@ -267,6 +274,8 @@
 - 커넥션 풀이 마른다는 것 (Hikari, 연쇄 장애) — [부록 A.1](spring-transaction-boundaries-and-batch.md#a1-커넥션-풀이-마른다는-것)
 - 행 잠금의 수명, lock wait timeout, 교착 — [부록 A.2](spring-transaction-boundaries-and-batch.md#a2-행-잠금은-언제-잡히고-언제-풀리나)
 - 트랜잭션을 쪼갤 때 생기는 부분 커밋 위험과 멱등성 — [9장](spring-transaction-boundaries-and-batch.md#9-트랜잭션을-쪼개면-새로-생기는-위험--부분-커밋)
+- 요청 하나가 커넥션 두 개를 쥐면 풀 안에서 교착이 생긴다 — [5장](spring-not-supported-and-read-transaction-boundaries.md#5-요청-하나가-커넥션-두-개를-쥐는-순간) · [5.2절](spring-not-supported-and-read-transaction-boundaries.md#52-풀이-작으면-요청끼리-서로를-기다리다-멈춘다)
+- 커넥션 반납을 Hikari 사용 중 수로 확인하는 테스트 — [9장](spring-not-supported-and-read-transaction-boundaries.md#9-커넥션-반납을-테스트로-확인하는-법)
 
 ---
 
@@ -287,3 +296,4 @@
 | [jvm-and-container-memory-metrics.md](jvm-and-container-memory-metrics.md) | JVM 메모리 · 컨테이너 — 힙 GC 직후 지표·cgroup 캐시 제외 계산·ECS 메타데이터 · 운영 관측성(로그 기반 지표·알람) | 2026-11-05 |
 | [spring-boot-startup-lifecycle-and-events.md](spring-boot-startup-lifecycle-and-events.md) | Spring Boot 기동 순서·이벤트 리스너·종료 · 배치 잡 실행기 · 스케줄 실행기·데몬 스레드 | 2026-11-05 |
 | [java-records.md](java-records.md) | Java 언어 — record 문법·컴포넌트·정식/compact 생성자·접근자·equals/toString·얕은 불변·static 기초·내부/static 중첩 클래스·중첩 record·record 패턴 | 2026-11-11 |
+| [spring-not-supported-and-read-transaction-boundaries.md](spring-not-supported-and-read-transaction-boundaries.md) | Spring 트랜잭션 — `NOT_SUPPORTED` 전파 · 빈 트랜잭션의 EntityManager · 커넥션 획득·반납 시점 · 커밋과 락 해제 순서 · readOnly 라우팅과 복제 지연 · DB 동시성/자원(커넥션 이중 점유) | 2026-11-17 |
