@@ -20,8 +20,8 @@ return new Envelope(text(root.get("requestId")), intValue(root.get("status")), r
 
 ## 핵심 요약
 
-1. record 헤더(이름 뒤 괄호)의 각 항목을 **컴포넌트(component)**라 부르며, 각 컴포넌트가 `private final` 필드 하나가 된다. → [1장](#1-괄호-안의-목록이-곧-필드-목록이다)
-2. 컴파일러가 컴포넌트 순서 그대로 인자를 받는 **정식 생성자(canonical constructor)**를 만든다. `new`에 넘긴 n번째 값이 n번째 컴포넌트에 들어간다. → [2장](#2-new에-넘긴-값은-순서대로-칸에-들어간다)
+1. record 헤더(이름 뒤 괄호)의 각 항목을 **컴포넌트**(component)라 부르며, 각 컴포넌트가 `private final` 필드 하나가 된다. → [1장](#1-괄호-안의-목록이-곧-필드-목록이다)
+2. 컴파일러가 컴포넌트 순서 그대로 인자를 받는 **정식 생성자**(canonical constructor)를 만든다. `new`에 넘긴 n번째 값이 n번째 컴포넌트에 들어간다. → [2장](#2-new에-넘긴-값은-순서대로-칸에-들어간다)
 3. 값을 꺼내는 메서드는 `getX()`가 아니라 컴포넌트 이름 그대로인 `x()`다. → [3장](#3-꺼낼-때는-getx가-아니라-x다)
 4. `equals`·`hashCode`·`toString`도 자동으로 생기며, `equals`는 모든 컴포넌트 값이 같으면 참이다. → [4장](#4-값이-같으면-같은-객체로-본다--equals와-tostring)
 5. 값 검증·정규화는 괄호 없는 **compact 생성자**에 쓴다. 필드 대입은 컴파일러가 마지막에 해 준다. → [5장](#5-검증은-compact-생성자에-쓴다)
@@ -139,7 +139,7 @@ a.hashCode() == b.hashCode();     // true
 a.toString();                     // "Point[x=3, y=4]"
 ```
 
-- `equals`는 모든 컴포넌트를 비교한다. 이런 객체를 **값 객체(value object)**라 부른다. 담긴 값이 정체성이다.
+- `equals`는 모든 컴포넌트를 비교한다. 이런 객체를 **값 객체**(value object)라 부른다. 담긴 값이 정체성이다.
 - `==`는 여전히 "같은 객체인가"를 본다. record라고 바뀌지 않는다.
 - `toString`은 `이름[컴포넌트=값, ...]` 모양이다.
 
@@ -196,7 +196,7 @@ JDK 21에서 직접 컴파일해 확인한 제약이다([부록 A](#부록-a-실
 
 ## 7. 클래스 안에 둔 record — 중첩 record와 private 접근
 
-record는 다른 클래스 안에 둘 수 있다. 이를 **중첩 record(nested record)**라 한다.
+record는 다른 클래스 안에 둘 수 있다. 이를 **중첩 record**(nested record)라 한다.
 
 ```java
 public class Parser {
@@ -212,7 +212,7 @@ public class Parser {
 
 ### 7.1 static은 "객체가 아니라 클래스에 붙는다"는 표시다
 
-클래스는 설계도이고, `new`로 만든 것은 그 설계도로 찍어 낸 **객체(인스턴스, instance)**다. 클래스 안에 선언한 것은 둘 중 하나에 붙는다.
+클래스는 설계도이고, `new`로 만든 것은 그 설계도로 찍어 낸 **객체**(인스턴스, instance)다. 클래스 안에 선언한 것은 둘 중 하나에 붙는다.
 
 | 선언 | 어디에 붙나 | 개수 | 부르는 법 |
 |---|---|---|---|
@@ -269,7 +269,7 @@ Counter.Inner in = c1.new Inner();       // 바깥 객체 c1이 있어야 만들
 Counter.Nested n = new Counter.Nested(); // 바깥 객체 없이 만들 수 있다
 ```
 
-차이는 **"바깥 객체를 몰래 붙잡고 있느냐"**다. `javap -p`로 열어 보면 내부 클래스에는 컴파일러가 숨은 필드를 넣어 둔다(부록 B 실측).
+차이는 "**바깥 객체를 몰래 붙잡고 있느냐**"다. `javap -p`로 열어 보면 내부 클래스에는 컴파일러가 숨은 필드를 넣어 둔다(부록 B 실측).
 
 ```text
 class Counter$Inner {

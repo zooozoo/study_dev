@@ -366,7 +366,7 @@ flowchart TD
 
 2.2절의 일반 폴링처럼 “3초마다 확인”하는 방식이 아니다. 요청이 서버에서 대기 중이면 메시지가 생길 때 바로 응답한다. 다만 응답 종료 후 다음 요청이 도착하기까지의 틈과, 요청·응답을 반복하는 비용은 있다.
 
-따라서 기억할 조합은 **`스트리밍 + 송신 POST` 또는 `롱 폴링 + 송신 POST`**다. WebSocket은 한 연결로 양방향 메시지를 교환하고, 이 HTTP 폴백은 수신과 송신을 나누어 비슷한 사용 경험을 제공한다. 개발자 도구에서 수신 요청이 오래 대기하는 것 자체는 정상이며, `xhr_send`가 별도로 보이는 것도 이 구조 때문이다.
+따라서 기억할 조합은 **`스트리밍 + 송신 POST` 또는 `롱 폴링 + 송신 POST`** 두 가지다. WebSocket은 한 연결로 양방향 메시지를 교환하고, 이 HTTP 폴백은 수신과 송신을 나누어 비슷한 사용 경험을 제공한다. 개발자 도구에서 수신 요청이 오래 대기하는 것 자체는 정상이며, `xhr_send`가 별도로 보이는 것도 이 구조 때문이다.
 
 근거: [Spring 공식 문서 — SockJS 개요](https://docs.spring.io/spring-framework/reference/web/websocket/fallback.html#websocket-fallback-sockjs-overview), [SockJS 프로토콜 — XHR 전송](https://sockjs.github.io/sockjs-protocol/sockjs-protocol-0.3.3.html).
 

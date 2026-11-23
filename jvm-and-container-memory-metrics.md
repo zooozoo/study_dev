@@ -145,7 +145,7 @@ heapAfterGcPeakPct = (GC 직후 힙 합계의 최댓값) ÷ (힙 전체 max) × 
 
 ### 5.1 cgroup이 세는 것
 
-컨테이너의 메모리 한도는 cgroup이 건다([JVM 노트 부록 A.1](jvm-memory-and-container-limits.md#a1-cgroup--리눅스가-자원-한도를-거는-방법)). cgroup v2 커널 문서는 `memory.current`를 "그 cgroup과 하위 cgroup이 지금 쓰는 메모리 총량"이라고 정의한다. 그리고 여기에 세는 메모리에 **"page cache and anonymous memory"**가 포함된다고 적는다.
+컨테이너의 메모리 한도는 cgroup이 건다([JVM 노트 부록 A.1](jvm-memory-and-container-limits.md#a1-cgroup--리눅스가-자원-한도를-거는-방법)). cgroup v2 커널 문서는 `memory.current`를 "그 cgroup과 하위 cgroup이 지금 쓰는 메모리 총량"이라고 정의한다. 그리고 여기에 세는 메모리에 "**page cache and anonymous memory**"가 포함된다고 적는다.
 
 | 종류 | 무엇인가 | 회수 가능? |
 |---|---|---|

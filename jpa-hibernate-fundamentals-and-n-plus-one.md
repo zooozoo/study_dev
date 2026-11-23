@@ -24,13 +24,13 @@ Kotlin + Spring 프로젝트에서 `JpaRepository` 인터페이스 하나만 선
 1. **JPA(Java Persistence API — 자바 영속성 API)는 ORM(Object-Relational Mapping — 객체·관계 매핑) 표준**(인터페이스·어노테이션의 스펙)이고 **Hibernate는 그 대표적인 구현체**다. 코드는 JPA로 쓰고 실행은 Hibernate가 한다. → [본문](#1-jpa--hibernate--spring-data-jpa--누가-무엇을-하나)
 2. **Spring Data JPA**는 JPA를 Spring에서 편하게 쓰도록 Repository 추상화를 제공한다. 인터페이스만 선언하면 구현 프록시를 만들어 준다. → [본문](#1-jpa--hibernate--spring-data-jpa--누가-무엇을-하나)
 3. **SQL은 테이블/컬럼**을 대상으로 하고 **JPQL(Java Persistence Query Language — 자바 영속성 질의어)은 엔티티/프로퍼티**를 대상으로 한다. Hibernate가 매핑을 보고 JPQL을 SQL로 번역한다. → [본문](#2-sql과-jpql--테이블을-보느냐-엔티티를-보느냐)
-4. **LAZY(지연 로딩)**는 연관 엔티티를 실제 사용할 때 조회한다. 기본은 LAZY로 두고 필요한 조회에서 fetch 전략을 고른다. → [본문](#3-lazy와-eager--연관-엔티티를-언제-읽을-것인가)
+4. **LAZY**(지연 로딩)는 연관 엔티티를 실제 사용할 때 조회한다. 기본은 LAZY로 두고 필요한 조회에서 fetch 전략을 고른다. → [본문](#3-lazy와-eager--연관-엔티티를-언제-읽을-것인가)
 5. **N+1**은 N개의 엔티티 각각에서 연관 데이터를 조회하면서 추가 쿼리가 반복되는 문제다. 첫 쿼리가 연관을 안 가져왔기 때문에 생기며, EAGER로 바꿔도 목록 조회에서는 그대로 난다. → [본문](#4-n1-문제--목록-하나가-쿼리-101번이-되는-순간)
 6. **Fetch Join**은 특정 조회에서 필요한 연관 엔티티를 처음부터 JOIN으로 같이 가져온다. 쿼리 1번. → [본문](#5-fetch-join--이번-쿼리에서는-팀이-꼭-필요하다)
 7. **EntityGraph**는 같은 목적을 `@EntityGraph` 어노테이션으로 선언적으로 지정하는 방법이다. 메서드 이름 쿼리와 기본 메서드에도 붙는다. → [본문](#6-entitygraph--같은-목적을-어노테이션으로-선언하기)
 8. **Batch Fetching**은 LAZY 로딩이 일어날 때 여러 대상을 `IN` 쿼리로 묶어 1+N을 1+몇 번으로 완화한다. 첫 쿼리는 그대로다. → [본문](#7-batch-fetching--나중에-읽되-묶어서-읽는다)
-9. **Persistence Context(영속성 컨텍스트)**는 JPA가 엔티티를 관리하는 공간이다. 같은 id는 한 번만 읽고 같은 인스턴스를 돌려주며(**1차 캐시**), 수명은 보통 트랜잭션과 같다. → [본문](#8-persistence-context--jpa가-엔티티를-들고-있는-공간)
-10. **Dirty Checking(변경 감지)**은 관리 중인 엔티티의 변경을 스냅샷과 비교해 감지하고 flush 시점에 UPDATE SQL을 자동으로 생성하는 기능이다. `save()` 없이 반영된다. → [본문](#9-dirty-checking--바꾸기만-하면-update가-나간다)
+9. **Persistence Context**(영속성 컨텍스트)는 JPA가 엔티티를 관리하는 공간이다. 같은 id는 한 번만 읽고 같은 인스턴스를 돌려주며(**1차 캐시**), 수명은 보통 트랜잭션과 같다. → [본문](#8-persistence-context--jpa가-엔티티를-들고-있는-공간)
+10. **Dirty Checking**(변경 감지)은 관리 중인 엔티티의 변경을 스냅샷과 비교해 감지하고 flush 시점에 UPDATE SQL을 자동으로 생성하는 기능이다. `save()` 없이 반영된다. → [본문](#9-dirty-checking--바꾸기만-하면-update가-나간다)
 
 ## 면접 질문 체크리스트
 
