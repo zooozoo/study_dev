@@ -30,6 +30,7 @@
 - 대칭키 암호 (AES·ChaCha20, AEAD, 속도 실측) 와 키 전달 문제 — [3장](cryptography-fundamentals-for-backend.md#3-대칭키-암호--빠르지만-키를-건네줄-방법이-없다)
 - 공개키 암호 (RSA 작은 숫자 예제, 공개키 암호화 → 개인키 복호화) — [4장](cryptography-fundamentals-for-backend.md#4-공개키-암호--잠그는-열쇠와-여는-열쇠를-분리한다)
 - 해시 (SHA-256, 눈사태 효과, 왜 복호화라는 개념이 없나, 비밀번호 해싱은 별개) — [5장](cryptography-fundamentals-for-backend.md#5-해시--되돌릴-수-없는-지문)
+- 해시 충돌과 무결성 검사, 계약서 서명 예시 — [5.3절](cryptography-fundamentals-for-backend.md#53-무결성은-여기서-나온다) · [6.3절](cryptography-fundamentals-for-backend.md#63-왜-원본이-아니라-해시에-서명하나)
 - **전자서명 — 개인키로 서명, 공개키로 검증** — [6장](cryptography-fundamentals-for-backend.md#6-전자서명--이-문서에서-가장-중요한-primitive)
 - **"개인키로 암호화한다"가 왜 부정확한가** (EC·Ed25519 에는 암호화 연산이 없다) — [6.4](cryptography-fundamentals-for-backend.md#64-개인키로-암호화한다가-왜-부정확한가) · [부록 A.1](cryptography-fundamentals-for-backend.md#a1-rsa-에서-서명과-암호화가-왜-닮아-보이나)
 - RSA · ECDSA · Ed25519 비교, ECDSA 난수 재사용 위험 — [6.5](cryptography-fundamentals-for-backend.md#65-rsa--ecdsa--ed25519-는-어떻게-다른가)
@@ -290,7 +291,7 @@
 | [aws-organizations-accounts-and-access.md](aws-organizations-accounts-and-access.md) | AWS 계정·조직(Organizations) · 로그인/권한 · 계정 수명 관리 | 2026-10-17 |
 | [mysql-online-ddl-and-schema-migration.md](mysql-online-ddl-and-schema-migration.md) | DB 스키마 변경 · MySQL 온라인 DDL · 마이그레이션 실무 | 2026-10-17 |
 | [tls-certificates-and-trust-stores.md](tls-certificates-and-trust-stores.md) | TLS · X.509 인증서 · 신뢰 저장소(PKI) · 런타임별 CA 관리 | 2026-10-17 |
-| [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-10-17 |
+| [cryptography-fundamentals-for-backend.md](cryptography-fundamentals-for-backend.md) | 암호학 기초 — 대칭키·공개키·해시·전자서명·HMAC·키 교환·하이브리드 · JWT | 2026-11-24 |
 | [kotlin-callable-references.md](kotlin-callable-references.md) | Kotlin 언어 — 함수 타입·함수 타입 프로퍼티·호출 가능 참조(`::`)·bound/unbound·가상 디스패치·1.4 적응 | 2026-10-17 |
 | [jpa-hibernate-fundamentals-and-n-plus-one.md](jpa-hibernate-fundamentals-and-n-plus-one.md) | JPA 기초 — JPA/Hibernate/Spring Data JPA · JPQL · LAZY/EAGER · N+1 · Fetch Join/EntityGraph/Batch Fetching · 영속성 컨텍스트 · Dirty Checking · 면접 체크리스트 | 2026-10-17 |
 | [docker-image-layers-and-copy-on-write.md](docker-image-layers-and-copy-on-write.md) | Docker 이미지·컨테이너 기초 — 레이어 · 쓰기 레이어 · Copy-on-Write · OverlayFS · 데이터 수명(stop/start/rm) · 볼륨 입구 | 2026-10-17 |
