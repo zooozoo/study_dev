@@ -7,7 +7,7 @@
 ## 네트워크 · 실시간 통신
 
 - HTTP 버전별 특징과 발전 원리 — [공통 기초](http-versions-and-evolution.md#1-http-메시지와-연결은-서로-다른-것이다) · [HTTP/1.0](http-versions-and-evolution.md#2-http10은-메시지를-표현하지만-연결을-반복해서-만든다) · [HTTP/1.1](http-versions-and-evolution.md#3-http11은-연결을-재사용하지만-응답-순서에-묶인다) · [HTTP/2](http-versions-and-evolution.md#4-http2는-응답을-쪼개-섞지만-tcp의-순서-보장은-공유한다) · [HTTP/3](http-versions-and-evolution.md#5-http3는-quic으로-스트림별-전달을-분리한다)
-- HTTP 메시지 경계와 헤더 — [CRLF와 본문 종료](http-versions-and-evolution.md#23-줄의-끝과-본문의-끝은-서로-다르다) · [기본 동작과 필수 헤더](http-versions-and-evolution.md#31-응답의-끝을-알면-연결을-닫지-않고-다음-요청을-보낼-수-있다) · [HTTP/2의 경계와 헤더](http-versions-and-evolution.md#43-http2에서는-프레임과-종료-표시로-메시지-경계를-구분한다)
+- HTTP 메시지 경계와 헤더 — [CR과 LF의 뜻](http-versions-and-evolution.md#21-텍스트-줄로-요청과-응답을-표현한다) · [줄의 끝과 본문의 끝](http-versions-and-evolution.md#23-줄의-끝과-본문의-끝은-서로-다르다) · [기본 동작과 필수 헤더](http-versions-and-evolution.md#31-응답의-끝을-알면-연결을-닫지-않고-다음-요청을-보낼-수-있다) · [HTTP/2의 경계와 헤더](http-versions-and-evolution.md#43-http2에서는-프레임과-종료-표시로-메시지-경계를-구분한다)
 - HTTP/1.1 파이프라이닝의 범위와 구현 — [같은 연결의 응답 순서](http-versions-and-evolution.md#32-요청을-미리-보내도-응답이-나오는-순서는-지켜야-한다) · [Tomcat·Go와 커널의 역할](http-versions-and-evolution.md#33-tomcat과-go는-같은-연결의-요청을-하나씩-처리해-순서를-지킨다)
 - HTTP 지연과 전송량 제어 — [RTT 비용 예시](http-versions-and-evolution.md#1-http-메시지와-연결은-서로-다른-것이다) · [스트림 번호의 관리](http-versions-and-evolution.md#41-프레임에-스트림-번호를-붙이면-응답을-섞을-수-있다) · [흐름·혼잡 제어](http-versions-and-evolution.md#42-tcp가-빠진-바이트를-기다리면-스트림도-함께-기다린다)
 - HTTP/2·3의 핵심 차이 — [응답 순서가 아닌 손실 이후의 데이터 전달 범위](http-versions-and-evolution.md#52-http2와-http3의-차이는-손실-이후의-데이터-전달-범위에-있다)
@@ -281,7 +281,7 @@
 
 | 문서 | 다루는 카테고리 | 작성/갱신 |
 |---|---|---|
-| [http-versions-and-evolution.md](http-versions-and-evolution.md) | HTTP/1.0·1.1·2·3 · 메시지 경계·헤더 · 파이프라이닝·서버 구현 · 다중화·전송량 제어 · TCP/QUIC·0-RTT·연결 이동 · 버전 협상·헤더 압축 | 2026-10-20 |
+| [http-versions-and-evolution.md](http-versions-and-evolution.md) | HTTP/1.0·1.1·2·3 · 메시지 경계·헤더 · 파이프라이닝·서버 구현 · 다중화·전송량 제어 · TCP/QUIC·0-RTT·연결 이동 · 버전 협상·헤더 압축 | 2026-11-23 |
 | [realtime-web-networking-cors-infra.md](realtime-web-networking-cors-infra.md) | 실시간 통신 · 웹 보안(CORS) · 인프라 · TCP 기초 | 2026-10-20 |
 | [spring-transaction-boundaries-and-batch.md](spring-transaction-boundaries-and-batch.md) | Spring 트랜잭션 · Spring Batch · DB 동시성/자원 | 2026-10-17 |
 | [jvm-memory-and-container-limits.md](jvm-memory-and-container-limits.md) | JVM 메모리 · 컨테이너 한도 · 운영 관측성 | 2026-11-05 |
